@@ -1,0 +1,499 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Eduardo Charvel</title>
+  <link href="https://fonts.googleapis.com/css2?family=DM+Serif+Display:ital@0;1&family=DM+Mono:wght@400;500&family=Inter:wght@300;400;500&display=swap" rel="stylesheet" />
+  <style>
+    :root {
+      --bg:          #0b1018;
+      --bg2:         #111826;
+      --panel:       rgba(17, 24, 38, 0.66);
+      --panel-solid: #131b2b;
+      --ink:         #ece7da;
+      --muted:       #8b95a8;
+      --accent:      #e6a94d;   /* amber — Geisel's dusk windows */
+      --accent-soft: rgba(230, 169, 77, 0.14);
+      --tree:        #e6a94d;   /* amber — the phylogeny motif */
+      --rule:        #2a3346;
+      --serif: 'DM Serif Display', Georgia, serif;
+      --mono:  'DM Mono', monospace;
+      --sans:  'Inter', system-ui, sans-serif;
+    }
+
+    *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+    html { scroll-behavior: smooth; }
+    body {
+      color: var(--ink); font-family: var(--sans); font-size: 16px; line-height: 1.65;
+      -webkit-font-smoothing: antialiased; position: relative;
+    }
+    a { text-decoration: none; color: inherit; }
+
+    /* ── GEISEL LIBRARY FIXED BACKGROUND ── */
+    body::before {
+      content: ''; position: fixed; inset: 0; z-index: -2;
+      background: url("photo_geisel.jpg") center 22% / cover no-repeat;
+    }
+    /* dusk wash: lighter up top so the library shows in the hero, darkening into a readable page */
+    body::after {
+      content: ''; position: fixed; inset: 0; z-index: -1;
+      background: linear-gradient(180deg, rgba(11,16,24,0.58) 0%, rgba(11,16,24,0.88) 42%, rgba(11,16,24,0.93) 100%);
+    }
+
+    /* ── NAV ── */
+    nav {
+      position: fixed; top: 0; left: 0; right: 0; z-index: 100;
+      display: flex; justify-content: space-between; align-items: center;
+      padding: 1rem 3rem;
+      background: rgba(11,16,24,0.72); backdrop-filter: blur(14px);
+      border-bottom: 1px solid var(--rule);
+    }
+    .nav-name { font-family: var(--mono); font-size: 0.85rem; font-weight: 500; letter-spacing: 0.04em; color: var(--accent); }
+    .nav-links { display: flex; gap: 2rem; list-style: none; }
+    .nav-links a { font-size: 0.76rem; font-weight: 500; letter-spacing: 0.06em; text-transform: uppercase; color: var(--muted); transition: color 0.2s; }
+    .nav-links a:hover, .nav-links a.active { color: var(--accent); }
+
+    /* ── HERO ── */
+    .hero {
+      min-height: 100vh; position: relative; overflow: hidden;
+      display: flex; align-items: center;
+      padding: 8rem 3rem 5rem; max-width: 1100px; margin: 0 auto;
+    }
+    /* seat the text on the left with a soft scrim, keep the tree side clearer */
+    .hero::before {
+      content: ''; position: absolute; inset: 0; z-index: 0; pointer-events: none;
+      background: linear-gradient(90deg, rgba(11,16,24,0.72) 0%, rgba(11,16,24,0.34) 55%, rgba(11,16,24,0) 100%);
+    }
+    .hero-tree {
+      position: absolute; right: -20px; top: 50%; transform: translateY(-50%);
+      width: 500px; height: 500px; opacity: 0.32; pointer-events: none; z-index: 0;
+    }
+    .hero-content { position: relative; z-index: 1; max-width: 580px; }
+
+    /* ── PROFILE BUBBLE → GITHUB ── */
+    .hero-id { display: flex; flex-direction: column; align-items: flex-start; margin-bottom: 2rem; }
+    .profile-bubble {
+      position: relative; width: 140px; height: 140px; border-radius: 50%;
+      overflow: visible; display: inline-block;
+      transition: transform 0.25s ease;
+    }
+    .profile-bubble .avatar {
+      display: block;
+      width: 140px; height: 140px; border-radius: 50%; overflow: hidden;
+      border: 2px solid var(--accent); box-shadow: 0 6px 26px rgba(0,0,0,0.45);
+    }
+    .profile-bubble .avatar img {
+      width: 100%; height: 100%; object-fit: cover; object-position: center 35%;
+      display: block; filter: saturate(0.92);
+    }
+    /* persistent GitHub badge in the corner */
+    .gh-badge {
+      position: absolute; right: -2px; bottom: -2px;
+      width: 44px; height: 44px; border-radius: 50%;
+      background: var(--accent); color: #0b1018;
+      display: flex; align-items: center; justify-content: center;
+      border: 2px solid var(--bg); box-shadow: 0 3px 10px rgba(0,0,0,0.5);
+    }
+    .gh-badge svg { width: 24px; height: 24px; }
+    .profile-bubble:hover { transform: translateY(-3px) scale(1.03); }
+    /* persistent caption so it's unmistakable */
+    .gh-caption {
+      margin-top: 0.85rem; font-family: var(--mono); font-size: 0.72rem;
+      letter-spacing: 0.03em; color: var(--accent);
+      display: inline-flex; align-items: center; gap: 0.4rem;
+      border-bottom: 1px solid transparent; transition: border-color 0.2s;
+    }
+    .gh-caption:hover { border-color: var(--accent); }
+
+    .hero-eyebrow {
+      font-family: var(--mono); font-size: 0.72rem; letter-spacing: 0.14em;
+      text-transform: uppercase; color: var(--accent);
+      margin-bottom: 1.5rem; display: flex; align-items: center; gap: 0.8rem;
+    }
+    .hero-eyebrow::before { content: ''; display: inline-block; width: 28px; height: 1px; background: var(--accent); }
+    h1 { font-family: var(--serif); font-size: clamp(3rem, 8vw, 5.8rem); font-weight: 400; line-height: 1.05; letter-spacing: -0.01em; margin-bottom: 2rem; text-shadow: 0 2px 30px rgba(0,0,0,0.4); }
+    h1 em { font-style: italic; color: var(--accent); }
+    .hero-bio { font-size: 1.08rem; font-weight: 300; color: #c9ccd6; max-width: 500px; line-height: 1.85; margin-bottom: 2.5rem; }
+    .hero-links { display: flex; flex-wrap: wrap; gap: 0.75rem; }
+    .btn { font-family: var(--mono); font-size: 0.74rem; font-weight: 500; letter-spacing: 0.06em; text-transform: uppercase; padding: 0.65rem 1.4rem; display: inline-block; transition: all 0.2s; cursor: pointer; }
+    .btn-primary { background: var(--accent); color: #0b1018; border: none; }
+    .btn-primary:hover { background: #f0bd6a; }
+    .btn-outline { border: 1px solid var(--rule); color: var(--ink); background: rgba(17,24,38,0.4); }
+    .btn-outline:hover { border-color: var(--accent); color: var(--accent); }
+
+    /* ── SECTION LAYOUT ── */
+    section { padding: 5rem 3rem; max-width: 900px; margin: 0 auto; }
+
+    /* ONE heading per section, integrated with the divider line */
+    .sec-head { display: flex; align-items: center; gap: 1rem; margin-bottom: 2.5rem; }
+    .sec-head .branch-glyph { width: 20px; height: 14px; flex-shrink: 0; }
+    .sec-head h2 {
+      font-family: var(--serif); font-size: clamp(1.6rem, 4vw, 2.3rem);
+      font-weight: 400; line-height: 1.1; white-space: nowrap; color: var(--ink);
+    }
+    .sec-head .hrule { flex: 1; height: 1px; background: var(--rule); }
+
+    /* ── REVEAL ── */
+    .reveal { opacity: 0; transform: translateY(20px); transition: opacity 0.55s ease, transform 0.55s ease; }
+    .reveal.visible { opacity: 1; transform: translateY(0); }
+
+    /* ── METHODS GRID ── */
+    .methods-grid { display: grid; grid-template-columns: 1fr 1fr; gap: 1px; background: var(--rule); border: 1px solid var(--rule); }
+    .method-card {
+      background: var(--panel); backdrop-filter: blur(6px);
+      padding: 2rem; position: relative; overflow: hidden; transition: background 0.2s;
+    }
+    .method-card:hover { background: rgba(23, 32, 50, 0.8); }
+    .method-card::before { content: ''; position: absolute; top: 0; left: 0; width: 3px; height: 0; background: var(--accent); transition: height 0.35s ease; }
+    .method-card:hover::before { height: 100%; }
+    .method-tag { font-family: var(--mono); font-size: 0.62rem; letter-spacing: 0.1em; text-transform: uppercase; color: var(--accent); background: var(--accent-soft); display: inline-block; padding: 0.2rem 0.55rem; margin-bottom: 1rem; }
+    .method-card h3 { font-family: var(--serif); font-size: 1.35rem; font-weight: 400; margin-bottom: 0.75rem; line-height: 1.2; color: var(--ink); }
+    .method-card p { font-size: 0.88rem; color: var(--muted); line-height: 1.75; }
+    .method-card a { display: inline-block; margin-top: 1rem; font-family: var(--mono); font-size: 0.7rem; letter-spacing: 0.06em; text-transform: uppercase; color: var(--accent); }
+    .method-card a:hover { text-decoration: underline; }
+
+    /* ── PUBLICATIONS ── */
+    .pub-item { padding: 1.75rem 0; border-bottom: 1px solid var(--rule); display: grid; grid-template-columns: 44px 1fr; gap: 0 1.5rem; }
+    .pub-year { font-family: var(--mono); font-size: 0.72rem; color: var(--accent); opacity: 0.85; padding-top: 0.2rem; }
+    .pub-title { font-family: var(--serif); font-size: 1.05rem; line-height: 1.35; margin-bottom: 0.4rem; color: var(--ink); }
+    .pub-authors { font-size: 0.84rem; color: var(--muted); margin: 0.35rem 0; }
+    .pub-authors strong { color: var(--ink); font-weight: 500; }
+    .pub-venue { font-family: var(--mono); font-size: 0.7rem; color: var(--accent); letter-spacing: 0.04em; }
+    .pub-tag { font-family: var(--mono); font-size: 0.6rem; letter-spacing: 0.08em; text-transform: uppercase; color: var(--accent); background: var(--accent-soft); padding: 0.12rem 0.45rem; margin-right: 0.5rem; }
+    .pub-link { display: inline-block; margin-top: 0.5rem; font-family: var(--mono); font-size: 0.68rem; letter-spacing: 0.05em; text-transform: uppercase; color: var(--muted); border: 1px solid var(--rule); padding: 0.18rem 0.55rem; transition: all 0.2s; }
+    .pub-link:hover { color: var(--accent); border-color: var(--accent); }
+
+    /* ── TALKS ── */
+    .talk-item { padding: 1.5rem 0; border-bottom: 1px solid var(--rule); display: grid; grid-template-columns: 44px 1fr; gap: 0 1.5rem; }
+    .talk-year { font-family: var(--mono); font-size: 0.7rem; color: var(--accent); opacity: 0.85; padding-top: 0.15rem; }
+    .talk-title { font-size: 0.92rem; font-weight: 500; color: var(--ink); margin-bottom: 0.3rem; line-height: 1.4; }
+    .talk-venue { font-family: var(--mono); font-size: 0.7rem; color: var(--muted); }
+
+    /* ── AWARDS ── */
+    .awards-grid { display: grid; grid-template-columns: 1fr 1fr; gap: 1px; background: var(--rule); border: 1px solid var(--rule); }
+    .award-card { background: var(--panel); backdrop-filter: blur(6px); padding: 1.5rem; transition: background 0.2s; }
+    .award-card:hover { background: rgba(23, 32, 50, 0.8); }
+    .award-year { font-family: var(--mono); font-size: 0.62rem; color: var(--accent); letter-spacing: 0.08em; margin-bottom: 0.4rem; }
+    .award-name { font-size: 0.88rem; color: var(--ink); line-height: 1.4; }
+
+    /* ── ABOUT ── */
+    .about-grid { display: grid; grid-template-columns: 1.1fr 0.9fr; gap: 3rem; align-items: start; }
+    .about-text p { font-size: 0.95rem; color: var(--muted); line-height: 1.85; margin-bottom: 1rem; }
+    .about-text p strong { color: var(--ink); font-weight: 500; }
+    .about-photo img { width: 100%; aspect-ratio: 3/4; object-fit: cover; object-position: center 40%; filter: saturate(0.95); display: block; border: 1px solid var(--rule); }
+    .about-photo-caption { font-family: var(--mono); font-size: 0.62rem; letter-spacing: 0.08em; color: var(--muted); margin-top: 0.5rem; }
+    .about-photo-caption em { font-style: italic; color: var(--ink); }
+    .interests-list { list-style: none; margin-top: 1.75rem; }
+    .interests-list li { font-family: var(--mono); font-size: 0.78rem; color: var(--muted); padding: 0.55rem 0; border-bottom: 1px solid var(--rule); display: flex; align-items: center; gap: 0.7rem; }
+    .interests-list li::before { content: '→'; color: var(--accent); font-size: 0.65rem; }
+
+    /* ── CONTACT ── */
+    .contact-block {
+      background: var(--panel); backdrop-filter: blur(8px);
+      border: 1px solid var(--rule);
+      padding: 3rem; display: flex; justify-content: space-between; align-items: center;
+      flex-wrap: wrap; gap: 1.5rem; position: relative; overflow: hidden;
+    }
+    .contact-block::before { content: ''; position: absolute; top: 0; left: 0; right: 0; height: 2px; background: var(--accent); }
+    .contact-tree { position: absolute; right: -10px; bottom: -20px; opacity: 0.1; pointer-events: none; }
+    .contact-block h3 { font-family: var(--serif); font-size: 1.8rem; font-weight: 400; font-style: italic; position: relative; z-index: 1; color: var(--ink); }
+    .contact-links { display: flex; flex-direction: column; gap: 0.55rem; position: relative; z-index: 1; }
+    .contact-links a { font-family: var(--mono); font-size: 0.78rem; color: var(--muted); letter-spacing: 0.04em; transition: color 0.2s; }
+    .contact-links a:hover { color: var(--accent); }
+
+    footer { text-align: center; padding: 2.5rem; font-family: var(--mono); font-size: 0.66rem; color: var(--muted); opacity: 0.5; letter-spacing: 0.06em; }
+
+    @media (max-width: 640px) {
+      nav { padding: 1rem 1.5rem; }
+      .nav-links { gap: 1rem; }
+      section { padding: 4rem 1.5rem; }
+      .hero { padding: 7rem 1.5rem 4rem; }
+      .hero-tree { display: none; }
+      .methods-grid, .awards-grid, .about-grid { grid-template-columns: 1fr; }
+      .sec-head h2 { white-space: normal; }
+    }
+  </style>
+</head>
+<body>
+
+  <!-- NAV -->
+  <nav>
+    <span class="nav-name">echarvel3</span>
+    <ul class="nav-links">
+      <li><a href="#research">Research</a></li>
+      <li><a href="#publications">Publications</a></li>
+      <li><a href="#talks">Talks</a></li>
+      <li><a href="#awards">Awards</a></li>
+      <li><a href="#about">About</a></li>
+      <li><a href="#contact">Contact</a></li>
+    </ul>
+  </nav>
+
+  <!-- HERO -->
+  <div class="hero" id="hero">
+    <svg class="hero-tree" viewBox="0 0 500 500" xmlns="http://www.w3.org/2000/svg" aria-hidden="true">
+      <line x1="250" y1="480" x2="250" y2="320" stroke="#e6a94d" stroke-width="3" stroke-linecap="round"/>
+      <line x1="140" y1="320" x2="360" y2="320" stroke="#e6a94d" stroke-width="2.5" stroke-linecap="round"/>
+      <line x1="140" y1="320" x2="140" y2="230" stroke="#e6a94d" stroke-width="2.5" stroke-linecap="round"/>
+      <line x1="360" y1="320" x2="360" y2="230" stroke="#e6a94d" stroke-width="2.5" stroke-linecap="round"/>
+      <line x1="80"  y1="230" x2="200" y2="230" stroke="#e6a94d" stroke-width="2" stroke-linecap="round"/>
+      <line x1="300" y1="230" x2="420" y2="230" stroke="#e6a94d" stroke-width="2" stroke-linecap="round"/>
+      <line x1="80"  y1="230" x2="80"  y2="155" stroke="#e6a94d" stroke-width="2" stroke-linecap="round"/>
+      <line x1="200" y1="230" x2="200" y2="155" stroke="#e6a94d" stroke-width="2" stroke-linecap="round"/>
+      <line x1="300" y1="230" x2="300" y2="155" stroke="#e6a94d" stroke-width="2" stroke-linecap="round"/>
+      <line x1="420" y1="230" x2="420" y2="155" stroke="#e6a94d" stroke-width="2" stroke-linecap="round"/>
+      <line x1="50"  y1="155" x2="110" y2="155" stroke="#e6a94d" stroke-width="1.5" stroke-linecap="round"/>
+      <line x1="170" y1="155" x2="230" y2="155" stroke="#e6a94d" stroke-width="1.5" stroke-linecap="round"/>
+      <line x1="270" y1="155" x2="330" y2="155" stroke="#e6a94d" stroke-width="1.5" stroke-linecap="round"/>
+      <line x1="390" y1="155" x2="450" y2="155" stroke="#e6a94d" stroke-width="1.5" stroke-linecap="round"/>
+      <line x1="50"  y1="155" x2="50"  y2="90"  stroke="#e6a94d" stroke-width="1.5" stroke-linecap="round"/>
+      <line x1="110" y1="155" x2="110" y2="90"  stroke="#e6a94d" stroke-width="1.5" stroke-linecap="round"/>
+      <line x1="170" y1="155" x2="170" y2="90"  stroke="#e6a94d" stroke-width="1.5" stroke-linecap="round"/>
+      <line x1="230" y1="155" x2="230" y2="90"  stroke="#e6a94d" stroke-width="1.5" stroke-linecap="round"/>
+      <line x1="270" y1="155" x2="270" y2="90"  stroke="#e6a94d" stroke-width="1.5" stroke-linecap="round"/>
+      <line x1="330" y1="155" x2="330" y2="90"  stroke="#e6a94d" stroke-width="1.5" stroke-linecap="round"/>
+      <line x1="390" y1="155" x2="390" y2="90"  stroke="#e6a94d" stroke-width="1.5" stroke-linecap="round"/>
+      <line x1="450" y1="155" x2="450" y2="90"  stroke="#e6a94d" stroke-width="1.5" stroke-linecap="round"/>
+      <circle cx="50"  cy="90" r="5" fill="#e6a94d"/>
+      <circle cx="110" cy="90" r="5" fill="#e6a94d"/>
+      <circle cx="170" cy="90" r="5" fill="#e6a94d"/>
+      <circle cx="230" cy="90" r="5" fill="#e6a94d"/>
+      <circle cx="270" cy="90" r="5" fill="#e6a94d"/>
+      <circle cx="330" cy="90" r="5" fill="#e6a94d"/>
+      <circle cx="390" cy="90" r="5" fill="#e6a94d"/>
+      <circle cx="450" cy="90" r="5" fill="#e6a94d"/>
+      <circle cx="250" cy="480" r="4" fill="#e6a94d"/>
+    </svg>
+    <div class="hero-content">
+      <div class="hero-id">
+        <a class="profile-bubble" href="https://github.com/echarvel3" target="_blank" rel="noreferrer" aria-label="Visit Eduardo's GitHub profile">
+          <span class="avatar"><img src="photo_hiking.jpg" alt="Eduardo Charvel" /></span>
+          <span class="gh-badge" aria-hidden="true">
+            <svg viewBox="0 0 16 16" fill="currentColor"><path d="M8 0C3.58 0 0 3.58 0 8c0 3.54 2.29 6.53 5.47 7.59.4.07.55-.17.55-.38 0-.19-.01-.82-.01-1.49-2.01.37-2.53-.49-2.69-.94-.09-.23-.48-.94-.82-1.13-.28-.15-.68-.52-.01-.53.63-.01 1.08.58 1.23.82.72 1.21 1.87.87 2.33.66.07-.52.28-.87.51-1.07-1.78-.2-3.64-.89-3.64-3.95 0-.87.31-1.59.82-2.15-.08-.2-.36-1.02.08-2.12 0 0 .67-.21 2.2.82a7.6 7.6 0 0 1 2-.27c.68 0 1.36.09 2 .27 1.53-1.04 2.2-.82 2.2-.82.44 1.1.16 1.92.08 2.12.51.56.82 1.27.82 2.15 0 3.07-1.87 3.75-3.65 3.95.29.25.54.73.54 1.48 0 1.07-.01 1.93-.01 2.2 0 .21.15.46.55.38A8.013 8.013 0 0 0 16 8c0-4.42-3.58-8-8-8z"/></svg>
+          </span>
+        </a>
+        <a class="gh-caption" href="https://github.com/echarvel3" target="_blank" rel="noreferrer">View my GitHub <span aria-hidden="true">↗</span></a>
+      </div>
+      <p class="hero-eyebrow">PhD Candidate · UC San Diego · Expected 2027</p>
+      <h1>Eduardo<br><em>Charvel</em></h1>
+      <p class="hero-bio">Evolutionary biologist and bioinformatician building computational methods for population genomics and phylogenomics — from genome skimming to conservation genomics of species spanning the US–Mexico border.</p>
+      <div class="hero-links">
+        <a class="btn btn-primary" href="#research">View Research</a>
+        <a class="btn btn-outline" href="https://github.com/echarvel3" target="_blank">GitHub</a>
+        <a class="btn btn-outline" href="#publications">Publications</a>
+        <a class="btn btn-outline" href="mailto:edcharvel@ucsd.edu">Email</a>
+      </div>
+    </div>
+  </div>
+
+  <!-- RESEARCH -->
+  <section id="research">
+    <div class="sec-head reveal">
+      <svg class="branch-glyph" viewBox="0 0 18 12" fill="none"><path d="M0 6 H6 M6 6 V1 M6 6 V11 M6 1 H18 M6 11 H14" stroke="#e6a94d" stroke-width="1.5" fill="none" stroke-linecap="round"/></svg>
+      <h2>Research</h2>
+      <span class="hrule"></span>
+    </div>
+    <div class="methods-grid">
+      <div class="method-card reveal">
+        <span class="method-tag">Population Genomics</span>
+        <h3>ReSkmer</h3>
+        <p>Models genome repetitiveness, coverage, and sequencing error to compute accurate k-mer-based genomic distances from low-coverage genome skims. Published in <em>Genome Biology</em> (2026).</p>
+        <a href="https://doi.org/10.1186/s13059-026-04108-9" target="_blank">Read paper →</a>
+      </div>
+      <div class="method-card reveal" style="transition-delay:80ms">
+        <span class="method-tag">Population Genomics</span>
+        <h3>DipSkmer</h3>
+        <p>Reference-free population genomics with diploid genome skims — extending the genome skimming framework to explicitly model heterozygosity for accessible nucleotide diversity estimation. Preprint 2026.</p>
+      </div>
+      <div class="method-card reveal" style="transition-delay:160ms">
+        <span class="method-tag">Phylogenomics</span>
+        <h3>EM-based phylogenetic dating</h3>
+        <p>Expectation-maximization approach enabling phylogenetic dating under a categorical rate model, improving accuracy of divergence time estimation. <em>Systematic Biology</em> (2024).</p>
+        <a href="#publications">See publication →</a>
+      </div>
+      <div class="method-card reveal" style="transition-delay:240ms">
+        <span class="method-tag">Conservation</span>
+        <h3>eDNA &amp; marine conservation</h3>
+        <p>Collaboration with the Field Museum and Minderoo Foundation to improve detection of environmental DNA for population health tracking and marine species conservation.</p>
+      </div>
+    </div>
+  </section>
+
+  <!-- PUBLICATIONS -->
+  <section id="publications">
+    <div class="sec-head reveal">
+      <svg class="branch-glyph" viewBox="0 0 18 12" fill="none"><path d="M0 6 H6 M6 6 V1 M6 6 V11 M6 1 H18 M6 11 H14" stroke="#e6a94d" stroke-width="1.5" fill="none" stroke-linecap="round"/></svg>
+      <h2>Selected work</h2>
+      <span class="hrule"></span>
+    </div>
+
+    <div class="pub-item reveal">
+      <span class="pub-year">2026</span>
+      <div>
+        <p class="pub-title">DipSkmer: Reference-free population genomics with diploid genome skims</p>
+        <p class="pub-authors"><strong>Charvel E.</strong>, Alves Monteiro H.J., Mirarab S., Bafna V.</p>
+        <p class="pub-venue">bioRxiv (preprint)</p>
+      </div>
+    </div>
+
+    <div class="pub-item reveal">
+      <span class="pub-year">2026</span>
+      <div>
+        <p class="pub-title">ReSkmer: modeling repeats allows k-mer-based alignment-free methods to calculate population genomic distances</p>
+        <p class="pub-authors"><strong>Charvel E.</strong>, Thomas I., Alves Monteiro H.J., Sarmashghi S., Dunshea G., Bafna V., Mirarab S.</p>
+        <p class="pub-venue">Genome Biology</p>
+        <a class="pub-link" href="https://doi.org/10.1186/s13059-026-04108-9" target="_blank">doi →</a>
+      </div>
+    </div>
+
+    <div class="pub-item reveal">
+      <span class="pub-year">2024</span>
+      <div>
+        <p class="pub-title">Expectation-maximization enables phylogenetic dating under a categorical rate model</p>
+        <p class="pub-authors">Mai U., <strong>Charvel E.</strong>, Mirarab S.</p>
+        <p class="pub-venue">Systematic Biology, 73(5): 823–838</p>
+      </div>
+    </div>
+
+    <div class="pub-item reveal">
+      <span class="pub-year">2026</span>
+      <div>
+        <span class="pub-tag">Software</span>
+        <span class="pub-title" style="display:inline;">ReSkmer v0.1.0</span>
+        <p class="pub-authors" style="margin-top:0.35rem;"><strong>Charvel E.</strong>, Sarmashghi S., Rachtman E., Thomas I., Alves Monteiro H.J., Bafna V., Mirarab S.</p>
+        <p class="pub-venue">Zenodo</p>
+        <a class="pub-link" href="https://doi.org/10.5281/zenodo.20058489" target="_blank">zenodo →</a>
+      </div>
+    </div>
+  </section>
+
+  <!-- TALKS -->
+  <section id="talks">
+    <div class="sec-head reveal">
+      <svg class="branch-glyph" viewBox="0 0 18 12" fill="none"><path d="M0 6 H6 M6 6 V1 M6 6 V11 M6 1 H18 M6 11 H14" stroke="#e6a94d" stroke-width="1.5" fill="none" stroke-linecap="round"/></svg>
+      <h2>Invited talks</h2>
+      <span class="hrule"></span>
+    </div>
+
+    <div class="talk-item reveal">
+      <span class="talk-year">2025</span>
+      <div>
+        <p class="talk-title">Updated Skmer Improves Reference- and Alignment-Free Population Genomics</p>
+        <p class="talk-venue">Genome Skimming Symposium @ Botany · Palm Springs, CA</p>
+      </div>
+    </div>
+
+    <div class="talk-item reveal">
+      <span class="talk-year">2024</span>
+      <div>
+        <p class="talk-title">Genome Skimming Workshop</p>
+        <p class="talk-venue">Field Museum, Grainger Bioinformatics Center · Chicago, IL</p>
+      </div>
+    </div>
+  </section>
+
+  <!-- AWARDS -->
+  <section id="awards">
+    <div class="sec-head reveal">
+      <svg class="branch-glyph" viewBox="0 0 18 12" fill="none"><path d="M0 6 H6 M6 6 V1 M6 6 V11 M6 1 H18 M6 11 H14" stroke="#e6a94d" stroke-width="1.5" fill="none" stroke-linecap="round"/></svg>
+      <h2>Recognition</h2>
+      <span class="hrule"></span>
+    </div>
+    <div class="awards-grid">
+      <div class="award-card reveal"><p class="award-year">2023</p><p class="award-name">Field Museum Grainger Bioinformatics Center Fellow</p></div>
+      <div class="award-card reveal" style="transition-delay:70ms"><p class="award-year">2022</p><p class="award-name">San Diego Match Fellowship</p></div>
+      <div class="award-card reveal" style="transition-delay:140ms"><p class="award-year">2022</p><p class="award-name">UCSD Sloan Scholar — University Center of Exemplary Mentoring</p></div>
+      <div class="award-card reveal" style="transition-delay:210ms"><p class="award-year">2021</p><p class="award-name">NIH Minority Biomedical Research Support — Initiative for Maximizing Student Development</p></div>
+      <div class="award-card reveal" style="transition-delay:280ms"><p class="award-year">2021</p><p class="award-name">USDA Hispanic Serving Institutions Program Grant</p></div>
+    </div>
+  </section>
+
+  <!-- ABOUT -->
+  <section id="about">
+    <div class="sec-head reveal">
+      <svg class="branch-glyph" viewBox="0 0 18 12" fill="none"><path d="M0 6 H6 M6 6 V1 M6 6 V11 M6 1 H18 M6 11 H14" stroke="#e6a94d" stroke-width="1.5" fill="none" stroke-linecap="round"/></svg>
+      <h2>About</h2>
+      <span class="hrule"></span>
+    </div>
+    <div class="about-grid">
+      <div class="about-text reveal">
+        <p>I'm a PhD Candidate in <strong>Bioinformatics &amp; Systems Biology at UC San Diego</strong>, working in the Mirarab Lab. My research focuses on building reference-free, alignment-free genomic tools that make population genomics accessible without expensive assembly steps — from modeling genome repetitiveness to handling diploid genome skims.</p>
+        <p>I collaborate with groups including the <strong>Field Museum</strong> and the <strong>Minderoo Foundation</strong> on environmental DNA methods for population monitoring and marine conservation.</p>
+        <ul class="interests-list">
+          <li>Phylogenomics &amp; molecular evolution</li>
+          <li>Population genetics &amp; genomics</li>
+          <li>Genome skimming methods</li>
+          <li>Alignment-free sequence analysis</li>
+          <li>Metagenomics &amp; eDNA</li>
+          <li>Conservation biology</li>
+          <li>US–Mexico border biodiversity</li>
+        </ul>
+      </div>
+      <div class="about-photo reveal" style="transition-delay:100ms">
+        <img src="photo_fieldwork.jpg" alt="Eduardo sampling Salvia brandegeei during fieldwork on Santa Rosa Island" loading="lazy" />
+        <p class="about-photo-caption">Sampling <em>Salvia brandegeei</em> · Santa Rosa Island</p>
+      </div>
+    </div>
+  </section>
+
+  <!-- CONTACT -->
+  <section id="contact" style="padding-bottom:2rem;">
+    <div class="sec-head reveal">
+      <svg class="branch-glyph" viewBox="0 0 18 12" fill="none"><path d="M0 6 H6 M6 6 V1 M6 6 V11 M6 1 H18 M6 11 H14" stroke="#e6a94d" stroke-width="1.5" fill="none" stroke-linecap="round"/></svg>
+      <h2>Get in touch</h2>
+      <span class="hrule"></span>
+    </div>
+    <div class="contact-block reveal">
+      <svg class="contact-tree" width="200" height="160" viewBox="0 0 200 160" fill="none" aria-hidden="true">
+        <line x1="100" y1="155" x2="100" y2="105" stroke="#e6a94d" stroke-width="2.5" stroke-linecap="round"/>
+        <line x1="55"  y1="105" x2="145" y2="105" stroke="#e6a94d" stroke-width="2"   stroke-linecap="round"/>
+        <line x1="55"  y1="105" x2="55"  y2="65"  stroke="#e6a94d" stroke-width="2"   stroke-linecap="round"/>
+        <line x1="145" y1="105" x2="145" y2="65"  stroke="#e6a94d" stroke-width="2"   stroke-linecap="round"/>
+        <line x1="30"  y1="65"  x2="80"  y2="65"  stroke="#e6a94d" stroke-width="1.5" stroke-linecap="round"/>
+        <line x1="120" y1="65"  x2="170" y2="65"  stroke="#e6a94d" stroke-width="1.5" stroke-linecap="round"/>
+        <line x1="30"  y1="65"  x2="30"  y2="35"  stroke="#e6a94d" stroke-width="1.5" stroke-linecap="round"/>
+        <line x1="80"  y1="65"  x2="80"  y2="35"  stroke="#e6a94d" stroke-width="1.5" stroke-linecap="round"/>
+        <line x1="120" y1="65"  x2="120" y2="35"  stroke="#e6a94d" stroke-width="1.5" stroke-linecap="round"/>
+        <line x1="170" y1="65"  x2="170" y2="35"  stroke="#e6a94d" stroke-width="1.5" stroke-linecap="round"/>
+        <circle cx="30"  cy="35" r="4" fill="#e6a94d"/>
+        <circle cx="80"  cy="35" r="4" fill="#e6a94d"/>
+        <circle cx="120" cy="35" r="4" fill="#e6a94d"/>
+        <circle cx="170" cy="35" r="4" fill="#e6a94d"/>
+        <circle cx="100" cy="155" r="3.5" fill="#e6a94d"/>
+      </svg>
+      <h3>Let's connect.</h3>
+      <div class="contact-links">
+        <a href="mailto:edcharvel@ucsd.edu">edcharvel@ucsd.edu</a>
+        <a href="https://github.com/echarvel3" target="_blank">github.com/echarvel3</a>
+        <a href="https://bioinformatics.ucsd.edu/node/21209" target="_blank">UCSD Profile</a>
+        <a href="https://www.linkedin.com/in/eduardo-charvel/" target="_blank">LinkedIn</a>
+      </div>
+    </div>
+  </section>
+
+  <footer>© 2026 Eduardo Charvel · UC San Diego · Bioinformatics &amp; Systems Biology</footer>
+
+  <script>
+    const reveals = document.querySelectorAll('.reveal');
+    const obs = new IntersectionObserver(entries => {
+      entries.forEach(e => { if (e.isIntersecting) { e.target.classList.add('visible'); obs.unobserve(e.target); } });
+    }, { threshold: 0.08 });
+    reveals.forEach(el => obs.observe(el));
+
+    const sections = document.querySelectorAll('section[id], div[id]');
+    const navLinks = document.querySelectorAll('.nav-links a');
+    const navObs = new IntersectionObserver(entries => {
+      entries.forEach(e => {
+        if (e.isIntersecting) {
+          navLinks.forEach(a => a.classList.remove('active'));
+          const match = document.querySelector(`.nav-links a[href="#${e.target.id}"]`);
+          if (match) match.classList.add('active');
+        }
+      });
+    }, { rootMargin: '-40% 0px -55% 0px' });
+    sections.forEach(s => navObs.observe(s));
+  </script>
+
+</body>
+</html>
