@@ -4,6 +4,7 @@
   <meta charset="UTF-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1.0" />
   <title>Eduardo Charvel</title>
+  <link rel="icon" type="image/svg+xml" href="data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 32 32'%3E%3Crect width='32' height='32' fill='%230b1018'/%3E%3Cg stroke='%23e6a94d' stroke-width='1.6' stroke-linecap='round' fill='none'%3E%3Cline x1='16' y1='30' x2='16' y2='22'/%3E%3Cline x1='9' y1='22' x2='23' y2='22'/%3E%3Cline x1='9' y1='22' x2='9' y2='15'/%3E%3Cline x1='23' y1='22' x2='23' y2='15'/%3E%3Cline x1='5' y1='15' x2='13' y2='15'/%3E%3Cline x1='19' y1='15' x2='27' y2='15'/%3E%3Cline x1='5' y1='15' x2='5' y2='8'/%3E%3Cline x1='13' y1='15' x2='13' y2='8'/%3E%3Cline x1='19' y1='15' x2='19' y2='8'/%3E%3Cline x1='27' y1='15' x2='27' y2='8'/%3E%3C/g%3E%3Cg fill='%23e6a94d'%3E%3Ccircle cx='5' cy='7' r='2'/%3E%3Ccircle cx='13' cy='7' r='2'/%3E%3Ccircle cx='19' cy='7' r='2'/%3E%3Ccircle cx='27' cy='7' r='2'/%3E%3C/g%3E%3C/svg%3E" />
   <link href="https://fonts.googleapis.com/css2?family=DM+Serif+Display:ital@0;1&family=DM+Mono:wght@400;500&family=Inter:wght@300;400;500&display=swap" rel="stylesheet" />
   <style>
     :root {
@@ -33,7 +34,7 @@
     /* ── GEISEL LIBRARY FIXED BACKGROUND ── */
     body::before {
       content: ''; position: fixed; inset: 0; z-index: -2;
-      background: url("photo_geisel.jpg") center 22% / cover no-repeat;
+      background: url("images/photo_geisel.jpg") center 22% / cover no-repeat;
     }
     /* dusk wash: lighter up top so the library shows in the hero, darkening into a readable page */
     body::after {
@@ -72,10 +73,15 @@
     .hero-content { position: relative; z-index: 1; max-width: 580px; }
 
     /* ── PROFILE BUBBLE → GITHUB ── */
-    .hero-id { display: flex; flex-direction: column; align-items: flex-start; margin-bottom: 2rem; }
+    /* bubble + name/caption sit side-by-side */
+    .hero-id {
+      display: flex; flex-direction: row; align-items: center;
+      gap: 1.5rem; margin-bottom: 2rem;
+    }
+    .hero-id-text { display: flex; flex-direction: column; gap: 0.55rem; }
     .profile-bubble {
       position: relative; width: 140px; height: 140px; border-radius: 50%;
-      overflow: visible; display: inline-block;
+      overflow: visible; display: inline-block; flex-shrink: 0;
       transition: transform 0.25s ease;
     }
     .profile-bubble .avatar {
@@ -87,7 +93,6 @@
       width: 100%; height: 100%; object-fit: cover; object-position: center 35%;
       display: block; filter: saturate(0.92);
     }
-    /* persistent GitHub badge in the corner */
     .gh-badge {
       position: absolute; right: -2px; bottom: -2px;
       width: 44px; height: 44px; border-radius: 50%;
@@ -97,9 +102,8 @@
     }
     .gh-badge svg { width: 24px; height: 24px; }
     .profile-bubble:hover { transform: translateY(-3px) scale(1.03); }
-    /* persistent caption so it's unmistakable */
     .gh-caption {
-      margin-top: 0.85rem; font-family: var(--mono); font-size: 0.72rem;
+      font-family: var(--mono); font-size: 0.72rem;
       letter-spacing: 0.03em; color: var(--accent);
       display: inline-flex; align-items: center; gap: 0.4rem;
       border-bottom: 1px solid transparent; transition: border-color 0.2s;
@@ -116,7 +120,7 @@
     h1 em { font-style: italic; color: var(--accent); }
     .hero-bio { font-size: 1.08rem; font-weight: 300; color: #c9ccd6; max-width: 500px; line-height: 1.85; margin-bottom: 2.5rem; }
     .hero-links { display: flex; flex-wrap: wrap; gap: 0.75rem; }
-    .btn { font-family: var(--mono); font-size: 0.74rem; font-weight: 500; letter-spacing: 0.06em; text-transform: uppercase; padding: 0.65rem 1.4rem; display: inline-block; transition: all 0.2s; cursor: pointer; }
+    .btn { font-family: var(--mono); font-size: 0.74rem; font-weight: 500; letter-spacing: 0.06em; text-transform: uppercase; padding: 0.65rem 1.4rem; display: inline-flex; align-items: center; line-height: 1; white-space: nowrap; transition: all 0.2s; cursor: pointer; }
     .btn-primary { background: var(--accent); color: #0b1018; border: none; }
     .btn-primary:hover { background: #f0bd6a; }
     .btn-outline { border: 1px solid var(--rule); color: var(--ink); background: rgba(17,24,38,0.4); }
@@ -202,6 +206,30 @@
     .contact-links a { font-family: var(--mono); font-size: 0.78rem; color: var(--muted); letter-spacing: 0.04em; transition: color 0.2s; }
     .contact-links a:hover { color: var(--accent); }
 
+    /* ── BLOG ── */
+    .blog-scroll {
+      max-height: 460px; overflow-y: auto; margin-top: 0.5rem;
+      padding-right: 0.75rem;
+      /* scrollbar styling */
+      scrollbar-width: thin; scrollbar-color: var(--accent) transparent;
+    }
+    .blog-scroll::-webkit-scrollbar { width: 8px; }
+    .blog-scroll::-webkit-scrollbar-track { background: transparent; }
+    .blog-scroll::-webkit-scrollbar-thumb { background: var(--rule); border-radius: 4px; }
+    .blog-scroll::-webkit-scrollbar-thumb:hover { background: var(--accent); }
+
+    .post {
+      background: var(--panel); backdrop-filter: blur(6px);
+      border: 1px solid var(--rule); border-left: 3px solid var(--accent);
+      padding: 1.5rem 1.75rem; margin-bottom: 1rem; transition: background 0.2s;
+    }
+    .post:hover { background: rgba(23, 32, 50, 0.8); }
+    .post-date { font-family: var(--mono); font-size: 0.66rem; letter-spacing: 0.08em; text-transform: uppercase; color: var(--accent); opacity: 0.85; margin-bottom: 0.5rem; }
+    .post-title { font-family: var(--serif); font-size: 1.25rem; font-weight: 400; line-height: 1.25; color: var(--ink); margin-bottom: 0.6rem; }
+    .post-body { font-size: 0.9rem; color: var(--muted); line-height: 1.75; }
+    .post-body a { color: var(--accent); border-bottom: 1px solid transparent; transition: border-color 0.2s; }
+    .post-body a:hover { border-color: var(--accent); }
+
     footer { text-align: center; padding: 2.5rem; font-family: var(--mono); font-size: 0.66rem; color: var(--muted); opacity: 0.5; letter-spacing: 0.06em; }
 
     @media (max-width: 640px) {
@@ -222,10 +250,11 @@
     <span class="nav-name">echarvel3</span>
     <ul class="nav-links">
       <li><a href="#research">Research</a></li>
+      <li><a href="#about">About</a></li>
       <li><a href="#publications">Publications</a></li>
       <li><a href="#talks">Talks</a></li>
       <li><a href="#awards">Awards</a></li>
-      <li><a href="#about">About</a></li>
+      <li><a href="#blog">Blog</a></li>
       <li><a href="#contact">Contact</a></li>
     </ul>
   </nav>
@@ -268,21 +297,24 @@
     <div class="hero-content">
       <div class="hero-id">
         <a class="profile-bubble" href="https://github.com/echarvel3" target="_blank" rel="noreferrer" aria-label="Visit Eduardo's GitHub profile">
-          <span class="avatar"><img src="photo_hiking.jpg" alt="Eduardo Charvel" /></span>
+          <span class="avatar"><img src="images/photo_hiking.jpg" alt="Eduardo Charvel" /></span>
           <span class="gh-badge" aria-hidden="true">
             <svg viewBox="0 0 16 16" fill="currentColor"><path d="M8 0C3.58 0 0 3.58 0 8c0 3.54 2.29 6.53 5.47 7.59.4.07.55-.17.55-.38 0-.19-.01-.82-.01-1.49-2.01.37-2.53-.49-2.69-.94-.09-.23-.48-.94-.82-1.13-.28-.15-.68-.52-.01-.53.63-.01 1.08.58 1.23.82.72 1.21 1.87.87 2.33.66.07-.52.28-.87.51-1.07-1.78-.2-3.64-.89-3.64-3.95 0-.87.31-1.59.82-2.15-.08-.2-.36-1.02.08-2.12 0 0 .67-.21 2.2.82a7.6 7.6 0 0 1 2-.27c.68 0 1.36.09 2 .27 1.53-1.04 2.2-.82 2.2-.82.44 1.1.16 1.92.08 2.12.51.56.82 1.27.82 2.15 0 3.07-1.87 3.75-3.65 3.95.29.25.54.73.54 1.48 0 1.07-.01 1.93-.01 2.2 0 .21.15.46.55.38A8.013 8.013 0 0 0 16 8c0-4.42-3.58-8-8-8z"/></svg>
           </span>
         </a>
-        <a class="gh-caption" href="https://github.com/echarvel3" target="_blank" rel="noreferrer">View my GitHub <span aria-hidden="true">↗</span></a>
+        <div class="hero-id-text">
+          <p class="hero-eyebrow" style="margin-bottom:0;">PhD Candidate · UC San Diego · Expected 2027</p>
+          <a class="gh-caption" href="https://github.com/echarvel3" target="_blank" rel="noreferrer">View my GitHub <span aria-hidden="true">↗</span></a>
+        </div>
       </div>
-      <p class="hero-eyebrow">PhD Candidate · UC San Diego · Expected 2027</p>
       <h1>Eduardo<br><em>Charvel</em></h1>
       <p class="hero-bio">Evolutionary biologist and bioinformatician building computational tools for population genomics and phylogenomics: from genome skimming to eDNA for biodiversity monitoring.</p>
       <div class="hero-links">
         <a class="btn btn-primary" href="#research">View Research</a>
-        <a class="btn btn-outline" href="https://github.com/echarvel3" target="_blank">GitHub</a>
+        <a class="btn btn-outline" href="https://scholar.google.com/citations?user=Mjxe2NYAAAAJ" target="_blank">Google Scholar</a>
         <a class="btn btn-outline" href="#publications">Publications</a>
         <a class="btn btn-outline" href="mailto:edcharvel@ucsd.edu">Email</a>
+        <a class="btn btn-outline" href="documents/EduardoCharvel_CV.pdf" download>Download CV</a>
       </div>
     </div>
   </div>
@@ -317,6 +349,33 @@
         <span class="method-tag">Conservation</span>
         <h3>eDNA &amp; marine conservation</h3>
         <p>Collaboration with the Field Museum and Minderoo Foundation to improve detection of environmental DNA for population health tracking and marine species conservation.</p>
+      </div>
+    </div>
+  </section>
+
+  <!-- ABOUT -->
+  <section id="about">
+    <div class="sec-head reveal">
+      <svg class="branch-glyph" viewBox="0 0 18 12" fill="none"><path d="M0 6 H6 M6 6 V1 M6 6 V11 M6 1 H18 M6 11 H14" stroke="#e6a94d" stroke-width="1.5" fill="none" stroke-linecap="round"/></svg>
+      <h2>About</h2>
+      <span class="hrule"></span>
+    </div>
+    <div class="about-grid">
+      <div class="about-text reveal">
+        <p>I'm a PhD Candidate in <strong>Bioinformatics &amp; Systems Biology at UC San Diego</strong>, working in the Mirarab Lab. My research focuses on building reference-free, alignment-free genomic tools that make population genomics accessible without expensive references and high coverage, and modeling how complex genome characteristics (such as repetitiveness and diploidy) interact with and bias the Jaccard Index.</p>
+        <p>I am also in active collaboration with the <strong>Field Museum</strong> and the <strong>Minderoo Foundation</strong> to develop environmental DNA methods for population monitoring and conservation.</p>
+        <ul class="interests-list">
+          <li>Phylogenomics &amp; molecular evolution</li>
+          <li>Population genetics &amp; genomics</li>
+          <li>Conservation genomics</li>
+          <li>Genome skimming methods</li>
+          <li>Alignment-free sequence analysis</li>
+          <li>Metagenomics &amp; eDNA</li>
+        </ul>
+      </div>
+      <div class="about-photo reveal" style="transition-delay:100ms">
+        <img src="images/photo_fieldwork.jpg" alt="Eduardo sampling Salvia brandegeei during fieldwork on Santa Rosa Island" loading="lazy" />
+        <p class="about-photo-caption">Sampling <em>Salvia brandegeei</em> · Santa Rosa Island</p>
       </div>
     </div>
   </section>
@@ -412,30 +471,49 @@
     </div>
   </section>
 
-  <!-- ABOUT -->
-  <section id="about">
+
+  <!-- BLOG -->
+  <section id="blog">
     <div class="sec-head reveal">
       <svg class="branch-glyph" viewBox="0 0 18 12" fill="none"><path d="M0 6 H6 M6 6 V1 M6 6 V11 M6 1 H18 M6 11 H14" stroke="#e6a94d" stroke-width="1.5" fill="none" stroke-linecap="round"/></svg>
-      <h2>About</h2>
+      <h2>Blog</h2>
       <span class="hrule"></span>
     </div>
-    <div class="about-grid">
-      <div class="about-text reveal">
-        <p>I'm a PhD Candidate in <strong>Bioinformatics &amp; Systems Biology at UC San Diego</strong>, working in the Mirarab Lab. My research focuses on building reference-free, alignment-free genomic tools that make population genomics accessible without expensive references and high coverage, and modeling how complex genome characteristics (such as repetitiveness and diploidy) interact with and bias the Jaccard Index.</p>
-        <p>I am also in active collaboration with the <strong>Field Museum</strong> and the <strong>Minderoo Foundation</strong> to develop environmental DNA methods for population monitoring and conservation.</p>
-        <ul class="interests-list">
-          <li>Phylogenomics &amp; molecular evolution</li>
-          <li>Population genetics &amp; genomics</li>
-          <li>Conservation genomics</li>
-          <li>Genome skimming methods</li>
-          <li>Alignment-free sequence analysis</li>
-          <li>Metagenomics &amp; eDNA</li>
-        </ul>
-      </div>
-      <div class="about-photo reveal" style="transition-delay:100ms">
-        <img src="photo_fieldwork.jpg" alt="Eduardo sampling Salvia brandegeei during fieldwork on Santa Rosa Island" loading="lazy" />
-        <p class="about-photo-caption">Sampling <em>Salvia brandegeei</em> · Santa Rosa Island</p>
-      </div>
+
+    <div class="blog-scroll reveal">
+
+      <!-- ============================================================= -->
+      <!--  TO ADD A NEW POST: copy the block below, paste it as the      -->
+      <!--  FIRST post inside .blog-scroll (newest on top), and edit the  -->
+      <!--  date, title, and body. That's it.                            -->
+      <!--                                                                -->
+      <!--  <article class="post">                                        -->
+      <!--    <p class="post-date">MONTH DAY, YEAR</p>                     -->
+      <!--    <h3 class="post-title">Your post title here</h3>            -->
+      <!--    <p class="post-body">Your post text here. You can add a      -->
+      <!--       <a href="https://example.com" target="_blank">link</a>.  -->
+      <!--    </p>                                                         -->
+      <!--  </article>                                                     -->
+      <!-- ============================================================= -->
+
+      <article class="post">
+        <p class="post-date">June 2026</p>
+        <h3 class="post-title">DipSkmer preprint is live</h3>
+        <p class="post-body">Our new method for reference-free population genomics with diploid genome skims is now up on bioRxiv. It extends the genome skimming framework to explicitly model heterozygosity, making nucleotide diversity estimation accessible without assembly. <a href="https://doi.org/10.64898/2026.06.05.730460" target="_blank">Read the preprint →</a></p>
+      </article>
+
+      <article class="post">
+        <p class="post-date">April 2026</p>
+        <h3 class="post-title">Fieldwork on Santa Rosa Island</h3>
+        <p class="post-body">Spent time in the Channel Islands sampling <em>Salvia brandegeei</em> for ongoing conservation genomics work. Island endemics like this one are exactly where accessible, low-cost genomic methods can make the biggest difference for monitoring and management.</p>
+      </article>
+
+      <article class="post">
+        <p class="post-date">March 2026</p>
+        <h3 class="post-title">ReSkmer published in Genome Biology</h3>
+        <p class="post-body">Excited to share that ReSkmer is out. By modeling genome repetitiveness, it lets k-mer-based, alignment-free methods calculate accurate population genomic distances even from repetitive genomes. <a href="https://doi.org/10.1186/s13059-026-04108-9" target="_blank">Read the paper →</a></p>
+      </article>
+
     </div>
   </section>
 
