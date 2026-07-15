@@ -21,6 +21,16 @@
       --serif: 'DM Serif Display', Georgia, serif;
       --mono:  'DM Mono', monospace;
       --sans:  'Inter', system-ui, sans-serif;
+      --font-xs:     0.62rem;
+      --font-sm:     0.72rem;
+      --font-md:     0.88rem;
+      --font-lg:     1.05rem;
+      --blur-sm:     6px;
+      --blur-md:     8px;
+      --blur-lg:     14px;
+      --transition-fast:   0.2s;
+      --transition-normal: 0.35s;
+      --transition-slow:   0.55s;
     }
 
     *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
@@ -30,6 +40,11 @@
       -webkit-font-smoothing: antialiased; position: relative;
     }
     a { text-decoration: none; color: inherit; }
+    a:not(.btn) { transition: text-shadow var(--transition-fast), color var(--transition-fast); }
+    a:not(.btn):hover, a:not(.btn):focus-visible {
+      color: var(--accent);
+      text-shadow: 0 0 8px var(--accent), 0 0 16px var(--accent-soft);
+    }
 
     /* ── GEISEL LIBRARY FIXED BACKGROUND ── */
     body::before {
@@ -54,6 +69,7 @@
     .nav-links { display: flex; gap: 2rem; list-style: none; }
     .nav-links a { font-size: 0.76rem; font-weight: 500; letter-spacing: 0.06em; text-transform: uppercase; color: var(--muted); transition: color 0.2s; }
     .nav-links a:hover, .nav-links a.active { color: var(--accent); }
+    .nav-links a:focus-visible { outline: 2px solid var(--accent); outline-offset: 2px; }
 
     /* ── HERO ── */
     .hero {
@@ -102,6 +118,7 @@
     }
     .gh-badge svg { width: 24px; height: 24px; }
     .profile-bubble:hover { transform: translateY(-3px) scale(1.03); }
+    .profile-bubble:focus-visible { outline: 2px solid var(--accent); outline-offset: 2px; border-radius: 50%; }
     .gh-caption {
       font-family: var(--mono); font-size: 0.72rem;
       letter-spacing: 0.03em; color: var(--accent);
@@ -109,6 +126,7 @@
       border-bottom: 1px solid transparent; transition: border-color 0.2s;
     }
     .gh-caption:hover { border-color: var(--accent); }
+    .gh-caption:focus-visible { outline: 2px solid var(--accent); outline-offset: 2px; }
 
     .hero-eyebrow {
       font-family: var(--mono); font-size: 0.72rem; letter-spacing: 0.14em;
@@ -121,6 +139,7 @@
     .hero-bio { font-size: 1.08rem; font-weight: 300; color: #c9ccd6; max-width: 500px; line-height: 1.85; margin-bottom: 2.5rem; }
     .hero-links { display: flex; flex-wrap: wrap; gap: 0.75rem; }
     .btn { font-family: var(--mono); font-size: 0.74rem; font-weight: 500; letter-spacing: 0.06em; text-transform: uppercase; padding: 0.65rem 1.4rem; display: inline-flex; align-items: center; line-height: 1; white-space: nowrap; transition: all 0.2s; cursor: pointer; }
+    .btn:focus-visible { outline: 2px solid var(--accent); outline-offset: 2px; }
     .btn-primary { background: var(--accent); color: #0b1018; border: none; }
     .btn-primary:hover { background: #f0bd6a; }
     .btn-outline { border: 1px solid var(--rule); color: var(--ink); background: rgba(17,24,38,0.4); }
@@ -142,13 +161,28 @@
     .reveal { opacity: 0; transform: translateY(20px); transition: opacity 0.55s ease, transform 0.55s ease; }
     .reveal.visible { opacity: 1; transform: translateY(0); }
 
+    /* ── CARD BASE ── */
+    .card { background: var(--panel); backdrop-filter: blur(var(--blur-sm)); transition: background var(--transition-fast); }
+    .card:hover { background: rgba(23, 32, 50, 0.8); }
+
+    /* ── UTILITY CLASSES ── */
+    .delay-70ms { transition-delay: 70ms; }
+    .delay-80ms { transition-delay: 80ms; }
+    .delay-100ms { transition-delay: 100ms; }
+    .delay-140ms { transition-delay: 140ms; }
+    .delay-160ms { transition-delay: 160ms; }
+    .delay-210ms { transition-delay: 210ms; }
+    .delay-240ms { transition-delay: 240ms; }
+    .delay-280ms { transition-delay: 280ms; }
+    .mb-0 { margin-bottom: 0; }
+    .inline-title { display: inline; }
+    .section-contact { padding-bottom: 2rem; }
+
     /* ── METHODS GRID ── */
     .methods-grid { display: grid; grid-template-columns: 1fr 1fr; gap: 1px; background: var(--rule); border: 1px solid var(--rule); }
     .method-card {
-      background: var(--panel); backdrop-filter: blur(6px);
-      padding: 2rem; position: relative; overflow: hidden; transition: background 0.2s;
+      padding: 2rem; position: relative; overflow: hidden;
     }
-    .method-card:hover { background: rgba(23, 32, 50, 0.8); }
     .method-card::before { content: ''; position: absolute; top: 0; left: 0; width: 3px; height: 0; background: var(--accent); transition: height 0.35s ease; }
     .method-card:hover::before { height: 100%; }
     .method-tag { font-family: var(--mono); font-size: 0.62rem; letter-spacing: 0.1em; text-transform: uppercase; color: var(--accent); background: var(--accent-soft); display: inline-block; padding: 0.2rem 0.55rem; margin-bottom: 1rem; }
@@ -156,6 +190,7 @@
     .method-card p { font-size: 0.88rem; color: var(--muted); line-height: 1.75; }
     .method-card a { display: inline-block; margin-top: 1rem; font-family: var(--mono); font-size: 0.7rem; letter-spacing: 0.06em; text-transform: uppercase; color: var(--accent); }
     .method-card a:hover { text-decoration: underline; }
+    .method-card a:focus-visible { outline: 2px solid var(--accent); outline-offset: 2px; }
 
     /* ── PUBLICATIONS ── */
     .pub-item { padding: 1.75rem 0; border-bottom: 1px solid var(--rule); display: grid; grid-template-columns: 44px 1fr; gap: 0 1.5rem; }
@@ -167,6 +202,7 @@
     .pub-tag { font-family: var(--mono); font-size: 0.6rem; letter-spacing: 0.08em; text-transform: uppercase; color: var(--accent); background: var(--accent-soft); padding: 0.12rem 0.45rem; margin-right: 0.5rem; }
     .pub-link { display: inline-block; margin-top: 0.5rem; font-family: var(--mono); font-size: 0.68rem; letter-spacing: 0.05em; text-transform: uppercase; color: var(--muted); border: 1px solid var(--rule); padding: 0.18rem 0.55rem; transition: all 0.2s; }
     .pub-link:hover { color: var(--accent); border-color: var(--accent); }
+    .pub-link:focus-visible { outline: 2px solid var(--accent); outline-offset: 1px; }
 
     /* ── TALKS ── */
     .talk-item { padding: 1.5rem 0; border-bottom: 1px solid var(--rule); display: grid; grid-template-columns: 44px 1fr; gap: 0 1.5rem; }
@@ -176,19 +212,18 @@
 
     /* ── AWARDS ── */
     .awards-grid { display: grid; grid-template-columns: 1fr 1fr; gap: 1px; background: var(--rule); border: 1px solid var(--rule); }
-    .award-card { background: var(--panel); backdrop-filter: blur(6px); padding: 1.5rem; transition: background 0.2s; }
-    .award-card:hover { background: rgba(23, 32, 50, 0.8); }
+    .award-card { padding: 1.5rem; }
     .award-year { font-family: var(--mono); font-size: 0.62rem; color: var(--accent); letter-spacing: 0.08em; margin-bottom: 0.4rem; }
     .award-name { font-size: 0.88rem; color: var(--ink); line-height: 1.4; }
 
     /* ── ABOUT ── */
-    .about-grid { display: grid; grid-template-columns: 1.1fr 0.9fr; gap: 3rem; align-items: start; }
+    .about-grid { display: grid; grid-template-columns: 1.3fr 0.7fr; gap: 3rem; align-items: start; }
     .about-text p { font-size: 0.95rem; color: var(--muted); line-height: 1.85; margin-bottom: 1rem; }
     .about-text p strong { color: var(--ink); font-weight: 500; }
-    .about-photo img { width: 100%; aspect-ratio: 3/4; object-fit: cover; object-position: center 40%; filter: saturate(0.95); display: block; border: 1px solid var(--rule); }
-    .about-photo-caption { font-family: var(--mono); font-size: 0.62rem; letter-spacing: 0.08em; color: var(--muted); margin-top: 0.5rem; }
+    .about-photo-caption { font-family: var(--mono); font-size: 0.62rem; letter-spacing: 0.08em; color: var(--muted); margin: 0.5rem 0; }
     .about-photo-caption em { font-style: italic; color: var(--ink); }
     .interests-list { list-style: none; margin-top: 1.75rem; }
+    .about-interests .interests-list { margin-top: 0; }
     .interests-list li { font-family: var(--mono); font-size: 0.78rem; color: var(--muted); padding: 0.55rem 0; border-bottom: 1px solid var(--rule); display: flex; align-items: center; gap: 0.7rem; }
     .interests-list li::before { content: '→'; color: var(--accent); font-size: 0.65rem; }
 
@@ -205,6 +240,7 @@
     .contact-links { display: flex; flex-direction: column; gap: 0.55rem; position: relative; z-index: 1; }
     .contact-links a { font-family: var(--mono); font-size: 0.78rem; color: var(--muted); letter-spacing: 0.04em; transition: color 0.2s; }
     .contact-links a:hover { color: var(--accent); }
+    .contact-links a:focus-visible { outline: 2px solid var(--accent); outline-offset: 2px; }
 
     /* ── BLOG ── */
     .blog-scroll {
@@ -219,16 +255,18 @@
     .blog-scroll::-webkit-scrollbar-thumb:hover { background: var(--accent); }
 
     .post {
-      background: var(--panel); backdrop-filter: blur(6px);
       border: 1px solid var(--rule); border-left: 3px solid var(--accent);
-      padding: 1.5rem 1.75rem; margin-bottom: 1rem; transition: background 0.2s;
+      padding: 1.5rem 1.75rem; margin-bottom: 1rem;
     }
-    .post:hover { background: rgba(23, 32, 50, 0.8); }
     .post-date { font-family: var(--mono); font-size: 0.66rem; letter-spacing: 0.08em; text-transform: uppercase; color: var(--accent); opacity: 0.85; margin-bottom: 0.5rem; }
     .post-title { font-family: var(--serif); font-size: 1.25rem; font-weight: 400; line-height: 1.25; color: var(--ink); margin-bottom: 0.6rem; }
+    .post-grid { display: grid; grid-template-columns: 1fr 180px; gap: 1.25rem; align-items: start; }
+    .post-media { justify-self: end; }
+    .post-photo { width: 180px; aspect-ratio: 4/3; object-fit: cover; object-position: center 40%; filter: saturate(0.95); display: block; border: 1px solid var(--rule); }
     .post-body { font-size: 0.9rem; color: var(--muted); line-height: 1.75; }
     .post-body a { color: var(--accent); border-bottom: 1px solid transparent; transition: border-color 0.2s; }
     .post-body a:hover { border-color: var(--accent); }
+    .post-body a:focus-visible { outline: 2px solid var(--accent); outline-offset: 2px; }
 
     footer { text-align: center; padding: 2.5rem; font-family: var(--mono); font-size: 0.66rem; color: var(--muted); opacity: 0.5; letter-spacing: 0.06em; }
 
@@ -238,12 +276,22 @@
       section { padding: 4rem 1.5rem; }
       .hero { padding: 7rem 1.5rem 4rem; }
       .hero-tree { display: none; }
-      .methods-grid, .awards-grid, .about-grid { grid-template-columns: 1fr; }
+      .methods-grid, .awards-grid, .about-grid, .post-grid { grid-template-columns: 1fr; }
+      .post-media { justify-self: start; }
+      .post-photo { width: 100%; }
       .sec-head h2 { white-space: normal; }
     }
   </style>
 </head>
 <body>
+
+  <svg style="display:none;">
+    <defs>
+      <symbol id="branch-glyph-icon" viewBox="0 0 18 12" fill="none">
+        <path d="M0 6 H6 M6 6 V1 M6 6 V11 M6 1 H18 M6 11 H14" stroke="#e6a94d" stroke-width="1.5" fill="none" stroke-linecap="round"/>
+      </symbol>
+    </defs>
+  </svg>
 
   <!-- NAV -->
   <nav>
@@ -303,7 +351,7 @@
           </span>
         </a>
         <div class="hero-id-text">
-          <p class="hero-eyebrow" style="margin-bottom:0;">PhD Candidate · UC San Diego · Expected 2027</p>
+          <p class="hero-eyebrow mb-0">PhD Candidate · UC San Diego · Expected 2027</p>
           <a class="gh-caption" href="https://github.com/echarvel3" target="_blank" rel="noreferrer">View my GitHub <span aria-hidden="true">↗</span></a>
         </div>
       </div>
@@ -322,30 +370,30 @@
   <!-- RESEARCH -->
   <section id="research">
     <div class="sec-head reveal">
-      <svg class="branch-glyph" viewBox="0 0 18 12" fill="none"><path d="M0 6 H6 M6 6 V1 M6 6 V11 M6 1 H18 M6 11 H14" stroke="#e6a94d" stroke-width="1.5" fill="none" stroke-linecap="round"/></svg>
+      <svg class="branch-glyph" viewBox="0 0 18 12" aria-hidden="true"><use href="#branch-glyph-icon" /></svg>
       <h2>Research</h2>
       <span class="hrule"></span>
     </div>
     <div class="methods-grid">
-      <div class="method-card reveal">
+      <div class="method-card card reveal">
         <span class="method-tag">Population Genomics</span>
         <h3>ReSkmer</h3>
         <p>Models genome repetitiveness, coverage, and sequencing error to compute accurate k-mer-based genomic distances from low-coverage genome skims. Published in <em>Genome Biology</em> (2026).</p>
         <a href="https://doi.org/10.1186/s13059-026-04108-9" target="_blank">Read paper →</a>
       </div>
-      <div class="method-card reveal" style="transition-delay:80ms">
+      <div class="method-card card reveal delay-80ms">
         <span class="method-tag">Population Genomics</span>
         <h3>DipSkmer</h3>
         <p>Reference-free population genomics with diploid genome skims — extending the genome skimming framework to explicitly model heterozygosity for accessible nucleotide diversity estimation. Preprint Available in BioRxiv 2026.</p>
         <a href="https://doi.org/10.64898/2026.06.05.730460" target="_blank">Read paper →</a>
       </div>
-      <div class="method-card reveal" style="transition-delay:160ms">
+      <div class="method-card card reveal delay-160ms">
         <span class="method-tag">Phylogenomics</span>
         <h3>EM-based phylogenetic dating</h3>
         <p>Expectation-maximization approach enabling phylogenetic dating under a categorical rate model, improving accuracy of divergence time estimation. <em>Systematic Biology</em> (2024).</p>
         <a href="https://doi.org/10.1093/sysbio/syae034" target="_blank">Read paper →</a>
       </div>
-      <div class="method-card reveal" style="transition-delay:240ms">
+      <div class="method-card card reveal delay-240ms">
         <span class="method-tag">Conservation</span>
         <h3>eDNA &amp; marine conservation</h3>
         <p>Collaboration with the Field Museum and Minderoo Foundation to improve detection of environmental DNA for population health tracking and marine species conservation.</p>
@@ -356,7 +404,7 @@
   <!-- ABOUT -->
   <section id="about">
     <div class="sec-head reveal">
-      <svg class="branch-glyph" viewBox="0 0 18 12" fill="none"><path d="M0 6 H6 M6 6 V1 M6 6 V11 M6 1 H18 M6 11 H14" stroke="#e6a94d" stroke-width="1.5" fill="none" stroke-linecap="round"/></svg>
+      <svg class="branch-glyph" viewBox="0 0 18 12" aria-hidden="true"><use href="#branch-glyph-icon" /></svg>
       <h2>About</h2>
       <span class="hrule"></span>
     </div>
@@ -364,6 +412,8 @@
       <div class="about-text reveal">
         <p>I'm a PhD Candidate in <strong><a href="https://bioinformatics.ucsd.edu/node/21209" target="_blank">Bioinformatics &amp; Systems Biology at UC San Diego</a></strong>, working in the <strong><a href="http://eceweb.ucsd.edu/~smirarab/" target="_blank">Mirarab Lab</a></strong>. My research focuses on building reference-free, alignment-free genomic tools that make population genomics accessible without expensive references and high coverage, and modeling how complex genome characteristics (such as repetitiveness and diploidy) interact with and bias the Jaccard Index.</p>
         <p>I am also in active collaboration with the Field Museum and the Minderoo Foundation to develop environmental DNA methods for population monitoring and conservation.</p>
+      </div>
+      <div class="about-interests reveal delay-100ms">
         <ul class="interests-list">
           <li>Phylogenomics &amp; molecular evolution</li>
           <li>Population genetics &amp; genomics</li>
@@ -373,17 +423,13 @@
           <li>Metagenomics &amp; eDNA</li>
         </ul>
       </div>
-      <div class="about-photo reveal" style="transition-delay:100ms">
-        <img src="images/photo_fieldwork.jpg" alt="Eduardo sampling Salvia brandegeei during fieldwork on Santa Rosa Island" loading="lazy" />
-        <p class="about-photo-caption">Sampling <em>Salvia brandegeei</em> · Santa Rosa Island</p>
-      </div>
     </div>
   </section>
 
   <!-- PUBLICATIONS -->
   <section id="publications">
     <div class="sec-head reveal">
-      <svg class="branch-glyph" viewBox="0 0 18 12" fill="none"><path d="M0 6 H6 M6 6 V1 M6 6 V11 M6 1 H18 M6 11 H14" stroke="#e6a94d" stroke-width="1.5" fill="none" stroke-linecap="round"/></svg>
+      <svg class="branch-glyph" viewBox="0 0 18 12" aria-hidden="true"><use href="#branch-glyph-icon" /></svg>
       <h2>Selected work</h2>
       <span class="hrule"></span>
     </div>
@@ -422,7 +468,7 @@
       <span class="pub-year">2026</span>
       <div>
         <span class="pub-tag">Software</span>
-        <span class="pub-title" style="display:inline;">ReSkmer v0.1.0</span>
+        <span class="pub-title inline-title">ReSkmer v0.1.0</span>
         <p class="pub-authors" style="margin-top:0.35rem;"><strong>Charvel E.</strong>, Sarmashghi S., Rachtman E., Thomas I., Alves Monteiro H.J., Bafna V., Mirarab S.</p>
         <p class="pub-venue">Zenodo</p>
         <a class="pub-link" href="https://github.com/echarvel3/ReSkmer" target="_blank">Github →</a>
@@ -433,7 +479,7 @@
   <!-- TALKS -->
   <section id="talks">
     <div class="sec-head reveal">
-      <svg class="branch-glyph" viewBox="0 0 18 12" fill="none"><path d="M0 6 H6 M6 6 V1 M6 6 V11 M6 1 H18 M6 11 H14" stroke="#e6a94d" stroke-width="1.5" fill="none" stroke-linecap="round"/></svg>
+      <svg class="branch-glyph" viewBox="0 0 18 12" aria-hidden="true"><use href="#branch-glyph-icon" /></svg>
       <h2>Invited talks</h2>
       <span class="hrule"></span>
     </div>
@@ -458,16 +504,16 @@
   <!-- AWARDS -->
   <section id="awards">
     <div class="sec-head reveal">
-      <svg class="branch-glyph" viewBox="0 0 18 12" fill="none"><path d="M0 6 H6 M6 6 V1 M6 6 V11 M6 1 H18 M6 11 H14" stroke="#e6a94d" stroke-width="1.5" fill="none" stroke-linecap="round"/></svg>
+      <svg class="branch-glyph" viewBox="0 0 18 12" aria-hidden="true"><use href="#branch-glyph-icon" /></svg>
       <h2>Awards</h2>
       <span class="hrule"></span>
     </div>
     <div class="awards-grid">
-      <div class="award-card reveal"><p class="award-year">2023</p><p class="award-name">Field Museum Fellowship: Grainger Bioinformatics Center</p></div>
-      <div class="award-card reveal" style="transition-delay:70ms"><p class="award-year">2022</p><p class="award-name">San Diego Match Fellowship</p></div>
-      <div class="award-card reveal" style="transition-delay:140ms"><p class="award-year">2022</p><p class="award-name"><a href="https://grad.ucsd.edu/oar2/programs-resources/ucem/sloan-scholars-pages/2022-sloan-scholars/charvel-eduardo.html" target="_blank">Sloan Scholars Program</a></p></div>
-      <div class="award-card reveal" style="transition-delay:210ms"><p class="award-year">2021</p><p class="award-name">Initiative for Maximizing Student Development (NIH)</p></div>
-      <div class="award-card reveal" style="transition-delay:280ms"><p class="award-year">2021</p><p class="award-name"><a href="https://binationalstudies.wixsite.com/internship" target="_blank">Binational Scholars Program</a></p></div>
+      <div class="award-card card reveal"><p class="award-year">2023</p><p class="award-name">Field Museum Fellowship: Grainger Bioinformatics Center</p></div>
+      <div class="award-card card reveal delay-70ms"><p class="award-year">2022</p><p class="award-name">San Diego Match Fellowship</p></div>
+      <div class="award-card card reveal delay-140ms"><p class="award-year">2022</p><p class="award-name"><a href="https://grad.ucsd.edu/oar2/programs-resources/ucem/sloan-scholars-pages/2022-sloan-scholars/charvel-eduardo.html" target="_blank">Sloan Scholars Program</a></p></div>
+      <div class="award-card card reveal delay-210ms"><p class="award-year">2021</p><p class="award-name">Initiative for Maximizing Student Development (NIH)</p></div>
+      <div class="award-card card reveal delay-280ms"><p class="award-year">2021</p><p class="award-name"><a href="https://binationalstudies.wixsite.com/internship" target="_blank">Binational Scholars Program</a></p></div>
     </div>
   </section>
 
@@ -475,7 +521,7 @@
   <!-- BLOG -->
   <section id="blog">
     <div class="sec-head reveal">
-      <svg class="branch-glyph" viewBox="0 0 18 12" fill="none"><path d="M0 6 H6 M6 6 V1 M6 6 V11 M6 1 H18 M6 11 H14" stroke="#e6a94d" stroke-width="1.5" fill="none" stroke-linecap="round"/></svg>
+      <svg class="branch-glyph" viewBox="0 0 18 12" aria-hidden="true"><use href="#branch-glyph-icon" /></svg>
       <h2>Blog</h2>
       <span class="hrule"></span>
     </div>
@@ -496,32 +542,40 @@
       <!--  </article>                                                     -->
       <!-- ============================================================= -->
 
-      <article class="post">
+      <article class="post card">
         <p class="post-date">June 2026</p>
         <h3 class="post-title">DipSkmer preprint is live</h3>
         <p class="post-body">Our new method for reference-free population genomics with diploid genome skims is now up on bioRxiv. It extends the genome skimming framework to explicitly model heterozygosity, making nucleotide diversity estimation accessible without assembly. <a href="https://doi.org/10.64898/2026.06.05.730460" target="_blank">Read the preprint →</a></p>
       </article>
 
 
-      <article class="post">
+      <article class="post card">
         <p class="post-date">March 2026</p>
         <h3 class="post-title">ReSkmer published in Genome Biology</h3>
         <p class="post-body">Excited to share that ReSkmer is out. By modeling genome repetitiveness, it lets k-mer-based, alignment-free methods calculate accurate population genomic distances even from repetitive genomes. <a href="https://doi.org/10.1186/s13059-026-04108-9" target="_blank">Read the paper →</a></p>
       </article>
 
-      <article class="post">
+      <article class="post card">
         <p class="post-date">March 2022</p>
-        <h3 class="post-title">Fieldwork on Santa Rosa Island</h3>
-        <p class="post-body">Visited the Channel Islands with Dr. Sula Vanderplank, sampling the island endemic sage <em>Salvia brandegeei</em> for ongoing evolutionary plant ecology research.</p>
+        <div class="post-grid">
+          <div class="post-content">
+            <h3 class="post-title">Fieldwork on Santa Rosa Island</h3>
+            <p class="post-body">Visited the Channel Islands with Dr. Sula Vanderplank, sampling the island endemic sage <em>Salvia brandegeei</em> for ongoing evolutionary plant ecology research.</p>
+          </div>
+          <div class="post-media">
+            <img class="post-photo" src="images/photo_fieldwork.jpg" alt="Eduardo sampling Salvia brandegeei during fieldwork on Santa Rosa Island" loading="lazy" />
+            <p class="about-photo-caption">Sampling <em>Salvia brandegeei</em> · Santa Rosa Island</p>
+          </div>
+        </div>
       </article>
 
     </div>
   </section>
 
   <!-- CONTACT -->
-  <section id="contact" style="padding-bottom:2rem;">
+  <section id="contact" class="section-contact">
     <div class="sec-head reveal">
-      <svg class="branch-glyph" viewBox="0 0 18 12" fill="none"><path d="M0 6 H6 M6 6 V1 M6 6 V11 M6 1 H18 M6 11 H14" stroke="#e6a94d" stroke-width="1.5" fill="none" stroke-linecap="round"/></svg>
+      <svg class="branch-glyph" viewBox="0 0 18 12" aria-hidden="true"><use href="#branch-glyph-icon" /></svg>
       <h2>Get in touch</h2>
       <span class="hrule"></span>
     </div>
