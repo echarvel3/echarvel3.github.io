@@ -78,9 +78,9 @@
 
     /* ── HERO ── */
     .hero {
-      min-height: 100vh; position: relative; overflow: hidden;
+      min-height: min(100vh, 46rem); position: relative; overflow: hidden;
       display: flex; align-items: center;
-      padding: 8rem 3rem 5rem; max-width: 1100px; margin: 0 auto;
+      padding: 8rem 3rem 3rem; max-width: 1100px; margin: 0 auto;
     }
     /* seat the text on the left with a soft scrim, keep the tree side clearer */
     .hero::before {
@@ -152,6 +152,7 @@
 
     /* ── SECTION LAYOUT ── */
     section { padding: 5rem 3rem; max-width: 900px; margin: 0 auto; }
+    #research { padding-top: 1.5rem; }
 
     /* ONE heading per section, integrated with the divider line */
     .sec-head { display: flex; align-items: center; gap: 1rem; margin-bottom: 2.5rem; }
@@ -362,11 +363,9 @@
         </div>
       </div>
       <h1>Eduardo<br><em>Charvel</em></h1>
-      <p class="hero-bio">Evolutionary biologist and bioinformatician building computational tools for population genomics and phylogenomics: from genome skimming to eDNA for biodiversity monitoring.</p>
+      <p class="hero-bio">Building computational tools for population genomics and phylogenomics, from genome skimming to eDNA.</p>
       <div class="hero-links">
-        <a class="btn btn-primary" href="#research">View Research</a>
-        <a class="btn btn-outline" href="https://scholar.google.com/citations?user=Mjxe2NYAAAAJ" target="_blank">Google Scholar</a>
-        <a class="btn btn-outline" href="#publications">Publications</a>
+        <a class="btn btn-primary" href="https://scholar.google.com/citations?user=Mjxe2NYAAAAJ" target="_blank">Google Scholar</a>
         <a class="btn btn-outline" href="mailto:edcharvel@ucsd.edu">Email</a>
         <a class="btn btn-outline" href="documents/EduardoCharvel_CV.pdf" download>Download CV</a>
       </div>
