@@ -1,0 +1,443 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Tool Tutorials · Eduardo Charvel</title>
+  <link rel="icon" type="image/svg+xml" href="data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 32 32'%3E%3Crect width='32' height='32' fill='%230b1018'/%3E%3Cg stroke='%23e6a94d' stroke-width='1.6' stroke-linecap='round' fill='none'%3E%3Cline x1='16' y1='30' x2='16' y2='22'/%3E%3Cline x1='9' y1='22' x2='23' y2='22'/%3E%3Cline x1='9' y1='22' x2='9' y2='15'/%3E%3Cline x1='23' y1='22' x2='23' y2='15'/%3E%3Cline x1='5' y1='15' x2='13' y2='15'/%3E%3Cline x1='19' y1='15' x2='27' y2='15'/%3E%3Cline x1='5' y1='15' x2='5' y2='8'/%3E%3Cline x1='13' y1='15' x2='13' y2='8'/%3E%3Cline x1='19' y1='15' x2='19' y2='8'/%3E%3Cline x1='27' y1='15' x2='27' y2='8'/%3E%3C/g%3E%3Cg fill='%23e6a94d'%3E%3Ccircle cx='5' cy='7' r='2'/%3E%3Ccircle cx='13' cy='7' r='2'/%3E%3Ccircle cx='19' cy='7' r='2'/%3E%3Ccircle cx='27' cy='7' r='2'/%3E%3C/g%3E%3C/svg%3E" />
+  <link href="https://fonts.googleapis.com/css2?family=DM+Serif+Display:ital@0;1&family=DM+Mono:wght@400;500&family=Inter:wght@300;400;500&display=swap" rel="stylesheet" />
+  <style>
+    :root {
+      --bg:          #0b1018;
+      --panel:       rgba(17, 24, 38, 0.66);
+      --panel-solid: #131b2b;
+      --ink:         #ece7da;
+      --muted:       #8b95a8;
+      --accent:      #e6a94d;
+      --accent-soft: rgba(230, 169, 77, 0.14);
+      --rule:        #2a3346;
+      --serif: 'DM Serif Display', Georgia, serif;
+      --mono:  'DM Mono', monospace;
+      --sans:  'Inter', system-ui, sans-serif;
+    }
+
+    *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+    html { scroll-behavior: smooth; }
+    body {
+      color: var(--ink); font-family: var(--sans);
+      font-size: 16px; line-height: 1.65; -webkit-font-smoothing: antialiased;
+      position: relative;
+    }
+    a { text-decoration: none; color: inherit; }
+    a:not(.back-link):hover { color: var(--accent); }
+
+    /* ── SCRIPPS PIER FIXED BACKGROUND ── */
+    body::before {
+      content: ''; position: fixed; inset: 0; z-index: -2;
+      background: url("images/photo_scripps_pier.jpg") center 55% / cover no-repeat;
+    }
+    /* dusk wash: lighter up top so the pier photo shows in the header, darkening into a readable page */
+    body::after {
+      content: ''; position: fixed; inset: 0; z-index: -1;
+      background: linear-gradient(180deg, rgba(11,16,24,0.55) 0%, rgba(11,16,24,0.87) 40%, rgba(11,16,24,0.93) 100%);
+    }
+
+    /* ── NAV ── */
+    nav {
+      position: fixed; top: 0; left: 0; right: 0; z-index: 100;
+      display: flex; justify-content: space-between; align-items: center;
+      padding: 1rem 3rem;
+      background: rgba(11,16,24,0.85); backdrop-filter: blur(14px);
+      border-bottom: 1px solid var(--rule);
+    }
+    .nav-name { font-family: var(--mono); font-size: 0.85rem; font-weight: 500; letter-spacing: 0.04em; color: var(--accent); }
+    .back-link {
+      font-family: var(--mono); font-size: 0.74rem; font-weight: 500;
+      letter-spacing: 0.06em; text-transform: uppercase; color: var(--muted);
+      display: inline-flex; align-items: center; gap: 0.5rem; transition: color 0.2s;
+    }
+    .back-link:hover { color: var(--accent); }
+
+    /* ── PAGE HEADER ── */
+    header.page-head { max-width: 900px; margin: 0 auto; padding: 9rem 3rem 3rem; }
+    .tree-glyph { width: 22px; height: 15px; margin-bottom: 1.5rem; }
+    .page-eyebrow {
+      font-family: var(--mono); font-size: 0.72rem; letter-spacing: 0.14em;
+      text-transform: uppercase; color: var(--accent);
+      margin-bottom: 1rem; display: flex; align-items: center; gap: 0.8rem;
+    }
+    .page-eyebrow::before { content: ''; display: inline-block; width: 28px; height: 1px; background: var(--accent); }
+    h1 {
+      font-family: var(--serif); font-size: clamp(2.4rem, 6vw, 4rem); font-weight: 400;
+      line-height: 1.08; letter-spacing: -0.01em; margin-bottom: 1.5rem;
+    }
+    h1 em { font-style: italic; color: var(--accent); }
+    .page-intro { font-size: 1.02rem; font-weight: 300; color: var(--muted); max-width: 620px; line-height: 1.85; }
+
+    /* ── METHODS NAV (lives in the top bar, hidden until hovered) ── */
+    .nav-methods { position: relative; }
+    .nav-methods-label {
+      font-family: var(--mono); font-size: 0.74rem; font-weight: 500;
+      letter-spacing: 0.06em; text-transform: uppercase; color: var(--muted);
+      cursor: default; display: inline-flex; align-items: center; gap: 0.4rem;
+      transition: color 0.2s;
+    }
+    .nav-methods-label svg { width: 9px; height: 9px; transition: transform 0.25s ease; }
+    .nav-methods:hover .nav-methods-label,
+    .nav-methods:focus-within .nav-methods-label { color: var(--accent); }
+    .nav-methods:hover .nav-methods-label svg,
+    .nav-methods:focus-within .nav-methods-label svg { transform: rotate(180deg); }
+
+    .nav-methods-panel {
+      position: absolute; top: 100%; right: 0; margin-top: 0.9rem;
+      display: flex; gap: 1.5rem;
+      background: var(--panel-solid); border: 1px solid var(--rule);
+      padding: 1.4rem 1.6rem; box-shadow: 0 12px 30px rgba(0,0,0,0.4);
+      opacity: 0; pointer-events: none; transform: translateY(-8px);
+      transition: opacity 0.22s ease, transform 0.22s ease;
+      z-index: 50;
+    }
+    .nav-methods:hover .nav-methods-panel,
+    .nav-methods:focus-within .nav-methods-panel {
+      opacity: 1; pointer-events: auto; transform: translateY(0);
+    }
+    /* invisible bridge so the panel doesn't close when moving the cursor from label to panel */
+    .nav-methods-panel::before {
+      content: ''; position: absolute; top: -0.9rem; left: 0; right: 0; height: 0.9rem;
+    }
+
+    .methods-strip-item {
+      display: flex; flex-direction: column; align-items: center; gap: 0.6rem;
+      width: 92px; text-align: center;
+    }
+    .methods-strip-logo {
+      width: 76px; height: 76px; border-radius: 50%;
+      border: 1px solid var(--rule); object-fit: cover;
+      transition: transform 0.2s, border-color 0.2s;
+    }
+    .methods-strip-item a:hover .methods-strip-logo { transform: translateY(-3px); border-color: var(--accent); }
+    .methods-strip-label { font-family: var(--mono); font-size: 0.62rem; letter-spacing: 0.03em; color: var(--muted); line-height: 1.3; }
+    .methods-strip-item a:hover .methods-strip-label { color: var(--accent); }
+    .methods-strip-logo.placeholder-logo {
+      display: flex; align-items: center; justify-content: center;
+      background: var(--panel); color: var(--muted); font-family: var(--mono); font-size: 1.4rem;
+      border-style: dashed;
+    }
+
+    main { max-width: 900px; margin: 0 auto; padding: 0 3rem 6rem; }
+
+    /* ── ACCORDION ── */
+    .accordion { border-top: 1px solid var(--rule); }
+
+    .tutorial {
+      border-bottom: 1px solid var(--rule);
+    }
+
+    .tutorial summary {
+      list-style: none; cursor: pointer;
+      display: flex; align-items: center; gap: 1.4rem;
+      padding: 1.25rem 0.25rem;
+      transition: background 0.2s;
+    }
+    .tutorial summary::-webkit-details-marker { display: none; }
+    .tutorial summary:hover { background: rgba(23, 32, 50, 0.5); }
+    .tutorial summary:focus-visible { outline: 2px solid var(--accent); outline-offset: -2px; }
+
+    .tut-chevron {
+      width: 30px; height: 30px; border-radius: 50%; flex-shrink: 0;
+      border: 1px solid var(--rule); background: var(--panel);
+      display: flex; align-items: center; justify-content: center;
+      transition: transform 0.3s ease, border-color 0.2s;
+    }
+    .tut-chevron svg { width: 12px; height: 12px; stroke: var(--accent); transition: transform 0.3s ease; }
+    .tutorial[open] .tut-chevron { transform: rotate(45deg); border-color: var(--accent); }
+
+    .tut-summary-text { flex: 1; min-width: 0; }
+    .tut-summary-logo {
+      width: 108px; height: 108px; border-radius: 50%; flex-shrink: 0;
+      border: 1px solid var(--rule); object-fit: cover;
+      transition: border-color 0.2s;
+    }
+    .tutorial summary:hover .tut-summary-logo { border-color: var(--accent); }
+    .tut-tag {
+      font-family: var(--mono); font-size: 0.6rem; letter-spacing: 0.1em; text-transform: uppercase;
+      color: var(--accent); background: var(--accent-soft); display: inline-block;
+      padding: 0.18rem 0.5rem; margin-bottom: 0.5rem;
+    }
+    .tut-title { font-family: var(--serif); font-size: 1.25rem; font-weight: 400; color: var(--ink); line-height: 1.25; }
+    .tut-desc { font-size: 0.84rem; color: var(--muted); margin-top: 0.35rem; line-height: 1.6; }
+
+    .tutorial-body { padding: 0.5rem 0.25rem 2.5rem 3.35rem; }
+    .tutorial-body p { font-size: 0.95rem; color: var(--muted); line-height: 1.85; margin-bottom: 1.1rem; }
+    .tutorial-body p strong { color: var(--ink); font-weight: 500; }
+
+    .tutorial-body h4.subhead {
+      font-family: var(--serif); font-size: 1.15rem; font-weight: 400; color: var(--ink);
+      margin: 1.75rem 0 0.9rem;
+    }
+
+    .step { display: grid; grid-template-columns: 34px 1fr; gap: 0 1.25rem; margin-bottom: 1.5rem; }
+    .step-num {
+      width: 34px; height: 34px; border-radius: 50%;
+      background: var(--accent-soft); color: var(--accent);
+      font-family: var(--mono); font-size: 0.85rem; font-weight: 500;
+      display: flex; align-items: center; justify-content: center;
+      border: 1px solid var(--rule);
+    }
+    .step-content h5 { font-size: 0.98rem; font-weight: 500; color: var(--ink); margin-bottom: 0.4rem; }
+    .step-content p { font-size: 0.88rem; color: var(--muted); line-height: 1.75; margin-bottom: 0; }
+
+    pre.code-block {
+      background: var(--panel-solid); border: 1px solid var(--rule); border-left: 3px solid var(--accent);
+      padding: 1.1rem 1.4rem; margin: 0.75rem 0 1.5rem; overflow-x: auto;
+      font-family: var(--mono); font-size: 0.82rem; color: var(--ink); line-height: 1.6;
+    }
+    pre.code-block .comment { color: var(--muted); }
+
+    .callout {
+      border: 1px solid var(--rule); border-left: 3px solid var(--accent);
+      background: var(--panel); backdrop-filter: blur(6px);
+      padding: 1.1rem 1.4rem; margin: 1.5rem 0; font-size: 0.88rem; color: var(--muted); line-height: 1.75;
+    }
+    .callout strong { color: var(--accent); font-family: var(--mono); font-size: 0.7rem; letter-spacing: 0.08em; text-transform: uppercase; display: block; margin-bottom: 0.4rem; }
+
+    /* placeholder (no content yet) rows read a bit differently */
+    .tutorial.placeholder .tut-title,
+    .tutorial.placeholder .tut-desc { opacity: 0.55; }
+    .tutorial.placeholder summary { cursor: default; }
+    .tutorial.placeholder .tut-chevron { opacity: 0.35; }
+
+    footer { text-align: center; padding: 2.5rem; font-family: var(--mono); font-size: 0.66rem; color: var(--muted); opacity: 0.5; letter-spacing: 0.06em; }
+
+    @media (max-width: 640px) {
+      nav { padding: 0.6rem 1.25rem; }
+      header.page-head { padding: 7rem 1.5rem 2.5rem; }
+      main { padding: 0 1.5rem 4rem; }
+      .tutorial-body { padding-left: 0.25rem; }
+      .step { grid-template-columns: 30px 1fr; }
+      /* tap-friendly on mobile: panel opens on tap via :focus-within, positioned to fit the viewport */
+      .nav-methods-panel { right: -1.25rem; left: -1.25rem; gap: 0.75rem; padding: 1.1rem; justify-content: space-around; }
+      .methods-strip-item { width: auto; }
+      .methods-strip-logo { width: 58px; height: 58px; }
+      .tut-summary-logo { width: 64px; height: 64px; }
+    }
+  </style>
+</head>
+<body>
+
+  <!-- NAV -->
+  <nav>
+    <span class="nav-name">echarvel3</span>
+    <div style="display:flex; align-items:center; gap:2rem;">
+
+      <!-- METHODS NAV — hover (or focus, for keyboard users) to reveal the logo panel -->
+      <div class="nav-methods" tabindex="0">
+        <span class="nav-methods-label">
+          Methods
+          <svg viewBox="0 0 10 6" fill="none" aria-hidden="true"><path d="M1 1 L5 5 L9 1" stroke="currentColor" stroke-width="1.4" stroke-linecap="round" stroke-linejoin="round"/></svg>
+        </span>
+
+        <!-- METHODS LOGO PANEL — a running list of logos for every method/tool developed.
+             Copy a .methods-strip-item block to add a new one; use .placeholder-logo
+             (a dashed circle with a "?") until a real logo image is ready. -->
+        <div class="nav-methods-panel">
+          <div class="methods-strip-item">
+            <a href="#tut-contamination">
+              <img class="methods-strip-logo" src="images/contamination_logo.png" alt="Genome skimming contamination logo" loading="lazy" />
+              <div class="methods-strip-label">Skimming Contamination</div>
+            </a>
+          </div>
+          <div class="methods-strip-item">
+            <a href="#tut-reskmer">
+              <img class="methods-strip-logo" src="images/reskmer_logo.png" alt="ReSkmer logo" loading="lazy" />
+              <div class="methods-strip-label">ReSkmer</div>
+            </a>
+          </div>
+          <div class="methods-strip-item">
+            <a href="#tut-dipskmer">
+              <img class="methods-strip-logo" src="images/reskmer_logo.png" alt="DipSkmer logo" loading="lazy" />
+              <div class="methods-strip-label">DipSkmer</div>
+            </a>
+          </div>
+        </div>
+      </div>
+
+      <a class="back-link" href="index.html">Back to Portfolio</a>
+    </div>
+  </nav>
+
+  <!-- PAGE HEADER -->
+  <header class="page-head">
+    <svg class="tree-glyph" viewBox="0 0 22 15" fill="none" aria-hidden="true">
+      <path d="M0 8 H7 M7 8 V1 M7 8 V14 M7 1 H22 M7 14 H17" stroke="#e6a94d" stroke-width="1.5" fill="none" stroke-linecap="round"/>
+    </svg>
+    <p class="page-eyebrow">Methods &amp; Walkthroughs</p>
+    <h1>Tool <em>Tutorials</em></h1>
+    <p class="page-intro">Step-by-step guides for the computational methods I've built and use. Click a tutorial below to expand it, or hover <strong style="color:var(--accent); font-weight:500;">Methods</strong> in the top bar to jump straight to one.</p>
+  </header>
+
+  <main>
+    <!-- ═══════════════════════════════════════════════════════════════ -->
+    <!--  ACCORDION OF TUTORIALS                                          -->
+    <!--                                                                   -->
+    <!--  TO ADD A NEW TUTORIAL: copy one whole <details class="tutorial"> -->
+    <!--  block below (including its </details> tag) and edit:            -->
+    <!--    - the .tut-tag text (category label)                          -->
+    <!--    - the .tut-title text (tutorial name)                         -->
+    <!--    - the .tut-desc text (one-line summary, shown collapsed)      -->
+    <!--    - everything inside .tutorial-body (the actual walkthrough)   -->
+    <!--  Add <details open> instead of <details> if you want a tutorial  -->
+    <!--  to start expanded when the page loads.                         -->
+    <!-- ═══════════════════════════════════════════════════════════════ -->
+    <div class="accordion">
+
+      <details class="tutorial placeholder" id="tut-contamination">
+        <summary>
+          <span class="tut-chevron" aria-hidden="true">
+            <svg viewBox="0 0 12 12" fill="none"><path d="M6 1 V11 M1 6 H11" stroke-linecap="round"/></svg>
+          </span>
+          <span class="tut-summary-text">
+            <span class="tut-tag">Coming soon</span>
+            <div class="tut-title">Genome Skim Pre-processing Pipeline</div>
+            <p class="tut-desc">Detecting and filtering non-target DNA (microbial, human, or cross-sample) from shallow genome skim data before downstream analysis.</p>
+          </span>
+          <img class="tut-summary-logo" src="images/contamination_logo.png" alt="Genome skimming contamination logo" loading="lazy" />
+        </summary>
+        <div class="tutorial-body">
+          <p><em>Write-up coming soon — this tutorial will cover taxonomic screening of genome skims, common contamination sources in field-collected samples, and filtering strategies before running ReSkmer/DipSkmer.</em></p>
+        </div>
+      </details>
+
+      <details class="tutorial placeholder" id="tut-reskmer">
+        <summary>
+          <span class="tut-chevron" aria-hidden="true">
+            <svg viewBox="0 0 12 12" fill="none"><path d="M6 1 V11 M1 6 H11" stroke-linecap="round"/></svg>
+          </span>
+          <span class="tut-summary-text">
+            <span class="tut-tag">Coming soon</span>
+           <div class="tut-title">Getting started with ReSkmer</div>
+            <p class="tut-desc">Installation, input formats, and running your first genomic distance estimation from low-coverage genome skims.</p>
+          </span>
+          <img class="tut-summary-logo" src="images/reskmer_logo.png" alt="Genome skimming contamination logo" loading="lazy" />
+        </summary>
+        <div class="tutorial-body">
+          <p><em>Write-up coming soon...</em></p>
+        </div>
+      </details>
+
+
+      <!-- <details class="tutorial" id="tut-reskmer">
+        <summary>
+          <span class="tut-chevron" aria-hidden="true">
+            <svg viewBox="0 0 12 12" fill="none"><path d="M6 1 V11 M1 6 H11" stroke-linecap="round"/></svg>
+          </span>
+          <span class="tut-summary-text">
+            <span class="tut-tag">Population Genomics</span>
+            <div class="tut-title">Getting started with ReSkmer</div>
+            <p class="tut-desc">Installation, input formats, and running your first genomic distance estimation from low-coverage genome skims.</p>
+          </span>
+          <img class="tut-summary-logo" src="images/reskmer_logo.png" alt="ReSkmer logo" loading="lazy" />
+        </summary>
+
+        <div class="tutorial-body">
+          <p>ReSkmer estimates population genomic distances directly from low-coverage genome skims, without assembly or a reference genome. This walkthrough covers installation, input preparation, and running your first comparison.</p>
+
+          <div class="callout">
+            <strong>Before you start</strong>
+            You'll need paired-end or single-end FASTQ files for two or more samples, and a Unix-like environment (Linux, macOS, or WSL on Windows).
+          </div>
+
+          <h4 class="subhead">Installation</h4>
+          <pre class="code-block"><span class="comment"># create an environment and install ReSkmer</span>
+conda create -n reskmer python=3.10
+conda activate reskmer
+pip install reskmer</pre>
+
+          <h4 class="subhead">Step-by-step</h4>
+
+          <div class="step">
+            <div class="step-num">1</div>
+            <div class="step-content">
+              <h5>Prepare your input reads</h5>
+              <p>Place your FASTQ files (gzipped is fine) in a working directory. ReSkmer works directly on raw reads — no trimming or assembly required for a first pass.</p>
+            </div>
+          </div>
+
+          <div class="step">
+            <div class="step-num">2</div>
+            <div class="step-content">
+              <h5>Run the sketch step</h5>
+              <p>Generate a k-mer sketch for each sample. This is the compressed representation ReSkmer uses for all downstream distance calculations.</p>
+            </div>
+          </div>
+
+          <pre class="code-block"><span class="comment"># example command — replace with your actual usage</span>
+reskmer sketch sample1.fastq.gz -o sample1.sketch
+reskmer sketch sample2.fastq.gz -o sample2.sketch</pre>
+
+          <div class="step">
+            <div class="step-num">3</div>
+            <div class="step-content">
+              <h5>Estimate pairwise distance</h5>
+              <p>Compare two or more sketches to get repeat-corrected genomic distance estimates, accounting for coverage and sequencing error.</p>
+            </div>
+          </div>
+
+          <pre class="code-block">reskmer distance sample1.sketch sample2.sketch</pre>
+
+          <div class="step">
+            <div class="step-num">4</div>
+            <div class="step-content">
+              <h5>Interpret the output</h5>
+              <p>ReSkmer reports a corrected genomic distance alongside confidence estimates — how this compares to traditional alignment-based distances is worth understanding before drawing conclusions.</p>
+            </div>
+          </div>
+
+          <div class="callout">
+            <strong>Reference</strong>
+            For the full method and benchmarking against alignment-based approaches, see the <a href="https://doi.org/10.1186/s13059-026-04108-9" target="_blank">ReSkmer paper in Genome Biology</a>.
+          </div>
+
+          <p style="margin-top:1.5rem;"><em>This tutorial is a work in progress — check back for updated commands and example datasets.</em></p>
+        </div>
+      </details> -->
+
+      <!-- PLACEHOLDER TUTORIALS — fill these in or delete them -->
+      <details class="tutorial placeholder" id="tut-dipskmer">
+        <summary>
+          <span class="tut-chevron" aria-hidden="true">
+            <svg viewBox="0 0 12 12" fill="none"><path d="M6 1 V11 M1 6 H11" stroke-linecap="round"/></svg>
+          </span>
+          <span class="tut-summary-text">
+            <span class="tut-tag">Coming soon</span>
+            <div class="tut-title">DipSkmer walkthrough</div>
+            <p class="tut-desc">Modeling heterozygosity for reference-free diploid population genomics.</p>
+          </span>
+          <img class="tut-summary-logo" src="images/reskmer_logo.png" alt="DipSkmer logo" loading="lazy" />
+        </summary>
+        <div class="tutorial-body">
+          <p><em>Write-up coming soon.</em></p>
+        </div>
+      </details>
+
+    </div>
+  </main>
+
+  <footer>© 2026 Eduardo Charvel · UC San Diego · Bioinformatics &amp; Systems Biology</footer>
+
+  <script>
+    // Auto-open the target tutorial when a Methods-panel logo link is clicked
+    document.querySelectorAll('.methods-strip-item a').forEach(link => {
+      link.addEventListener('click', () => {
+        const id = link.getAttribute('href').replace('#', '');
+        const target = document.getElementById(id);
+        if (target && target.tagName === 'DETAILS') target.open = true;
+        // collapse the hover panel so it doesn't stay stuck open after navigating
+        const trigger = document.querySelector('.nav-methods');
+        if (trigger) trigger.blur();
+      });
+    });
+  </script>
+
+</body>
+</html>

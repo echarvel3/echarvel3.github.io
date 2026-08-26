@@ -278,15 +278,44 @@
     footer { text-align: center; padding: 2.5rem; font-family: var(--mono); font-size: 0.66rem; color: var(--muted); opacity: 0.5; letter-spacing: 0.06em; }
 
     @media (max-width: 640px) {
-      nav { padding: 1rem 1.5rem; }
-      .nav-links { gap: 1rem; }
+      /* stack the nav so the name doesn't collide with the links */
+      nav {
+        padding: 0.6rem 0 0.5rem;
+        flex-direction: column; align-items: stretch; gap: 0.35rem;
+      }
+      .nav-name { padding: 0 1.25rem; font-size: 0.8rem; }
+      /* links become their own horizontally scrollable row */
+      .nav-links {
+        gap: 1.15rem;
+        overflow-x: auto;
+        flex-wrap: nowrap;
+        padding: 0 1.25rem 0.15rem;
+        -webkit-overflow-scrolling: touch;
+        scrollbar-width: none;           /* Firefox */
+        -ms-overflow-style: none;        /* IE/Edge */
+      }
+      .nav-links::-webkit-scrollbar { display: none; }  /* Chrome/Safari */
+      .nav-links li { flex: 0 0 auto; }
+      .nav-links a { font-size: 0.68rem; letter-spacing: 0.05em; white-space: nowrap; }
+
+      /* hero needs more top clearance now that nav is two rows */
+      .hero { padding: 8.5rem 1.5rem 4rem; }
+
       section { padding: 4rem 1.5rem; }
-      .hero { padding: 7rem 1.5rem 4rem; }
       .hero-tree { display: none; }
       .methods-grid, .awards-grid, .about-grid, .post-grid { grid-template-columns: 1fr; }
       .post-media { justify-self: start; }
       .post-photo { width: 100%; }
       .sec-head h2 { white-space: normal; }
+    }
+
+    /* very narrow phones — drop the name entirely, links get the full width */
+    @media (max-width: 400px) {
+      .nav-name { display: none; }
+      nav { padding: 0.5rem 0; }
+      .nav-links { padding: 0 1rem; gap: 1rem; }
+      .nav-links a { font-size: 0.66rem; }
+      .hero { padding: 7rem 1.25rem 3.5rem; }
     }
   </style>
 </head>
@@ -310,6 +339,7 @@
       <li><a href="#talks">Talks</a></li>
       <li><a href="#awards">Awards</a></li>
       <li><a href="#blog">Blog</a></li>
+      <li><a href="tutorials.html">Tutorials</a></li>
       <li><a href="#contact">Contact</a></li>
     </ul>
   </nav>
@@ -363,7 +393,7 @@
         </div>
       </div>
       <h1>Eduardo<br><em>Charvel</em></h1>
-      <p class="hero-bio">Building computational tools for population genomics and phylogenomics, from genome skimming to eDNA.</p>
+      <p class="hero-bio">Building computational tools for low-coverage population genomics and environmental DNA.</p>
       <div class="hero-links">
         <a class="btn btn-primary" href="https://scholar.google.com/citations?user=Mjxe2NYAAAAJ" target="_blank">Google Scholar</a>
         <a class="btn btn-outline" href="mailto:edcharvel@ucsd.edu">Email</a>
