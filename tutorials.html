@@ -38,9 +38,16 @@
     }
     /* dusk wash: lighter up top so the pier photo shows in the header, darkening into a readable page */
     body::after {
-      content: ''; position: fixed; inset: 0; z-index: -1;
+      content: ''; position: fixed; inset: 0; z-index: -2;
       background: linear-gradient(180deg, rgba(11,16,24,0.55) 0%, rgba(11,16,24,0.87) 40%, rgba(11,16,24,0.93) 100%);
     }
+
+    /* ── PETRI DISH: drifting microbes, above the dusk wash, below content ── */
+    #petri {
+      position: fixed; inset: 0; width: 100%; height: 100%;
+      z-index: -1; pointer-events: none;
+    }
+    @media print { #petri { display: none; } }
 
     /* ── NAV ── */
     nav {
@@ -224,6 +231,8 @@
   </style>
 </head>
 <body>
+
+  <canvas id="petri" aria-hidden="true"></canvas>
 
   <!-- NAV -->
   <nav>
@@ -437,6 +446,340 @@ reskmer sketch sample2.fastq.gz -o sample2.sketch</pre>
         if (trigger) trigger.blur();
       });
     });
+  </script>
+
+
+    <!-- ── PETRI DISH BACKGROUND ── -->
+  <script>
+  (() => {
+    const canvas = document.getElementById('petri');
+    if (!canvas) return;
+    const ctx = canvas.getContext('2d');
+    const reduceMotion = window.matchMedia('(prefers-reduced-motion: reduce)').matches;
+    const STROKE = '230, 169, 77';            // amber, matches --accent
+    const TAU = Math.PI * 2;
+
+    let W = 0, H = 0, DPR = 1;
+    let organisms = [], motes = [];
+    let running = true, last = 0, t0 = 0;
+
+    const rand = (a, b) => a + Math.random() * (b - a);
+    const pick = arr => arr[(Math.random() * arr.length) | 0];
+    // cheap deterministic "noise": layered sines keyed by a per-organism seed
+    const wobble = (seed, phase) =>
+      Math.sin(phase * 1.0 + seed * 12.9898) * 0.6 +
+      Math.sin(phase * 2.3 + seed * 78.233)  * 0.3 +
+      Math.sin(phase * 0.6 + seed * 37.719)  * 0.1;
+
+    // one slow global "current" the whole particle field drifts along
+    const flow = tSec => [
+      Math.sin(tSec * 0.05) * 0.6 + Math.sin(tSec * 0.017 + 1.3) * 0.4,
+      Math.cos(tSec * 0.04 + 2.1) * 0.6 + Math.sin(tSec * 0.023) * 0.4
+    ];
+
+    // cached soft-glow sprite for the motes (drawn once, blitted per particle)
+    const glow = document.createElement('canvas');
+    glow.width = glow.height = 64;
+    {
+      const g = glow.getContext('2d');
+      const rg = g.createRadialGradient(32, 32, 0, 32, 32, 32);
+      rg.addColorStop(0, 'rgba(' + STROKE + ', 1)');
+      rg.addColorStop(0.35, 'rgba(' + STROKE + ', 0.5)');
+      rg.addColorStop(1, 'rgba(' + STROKE + ', 0)');
+      g.fillStyle = rg;
+      g.fillRect(0, 0, 64, 64);
+    }
+    function drawMote(m) {
+      const size = m.r * (0.6 + m.z);
+      ctx.globalAlpha = m.a;
+      ctx.drawImage(glow, m.x - size, m.y - size, size * 2, size * 2);
+    }
+
+    // additive colour bloom behind an organism
+    function halo(x, y, rad, col, a) {
+      const g = ctx.createRadialGradient(x, y, 0, x, y, rad);
+      g.addColorStop(0, 'rgba(' + col + ', ' + a + ')');
+      g.addColorStop(1, 'rgba(' + col + ', 0)');
+      const prev = ctx.globalCompositeOperation;
+      ctx.globalCompositeOperation = 'lighter';
+      ctx.fillStyle = g;
+      ctx.beginPath(); ctx.arc(x, y, rad, 0, TAU); ctx.fill();
+      ctx.globalCompositeOperation = prev;
+    }
+
+    function capsule(cx, cy, len, wid, fillStyle) {
+      const r = wid / 2, hl = Math.max(0, len / 2 - r);
+      ctx.beginPath();
+      ctx.moveTo(cx - hl, cy - r);
+      ctx.lineTo(cx + hl, cy - r);
+      ctx.arc(cx + hl, cy, r, -Math.PI / 2, Math.PI / 2);
+      ctx.lineTo(cx - hl, cy + r);
+      ctx.arc(cx - hl, cy, r, Math.PI / 2, -Math.PI / 2);
+      if (fillStyle) { ctx.fillStyle = fillStyle; ctx.fill(); }
+      ctx.stroke();
+    }
+
+    class Microbe {
+      constructor() {
+        this.x = Math.random() * W;
+        this.y = Math.random() * H;
+        this.a = Math.random() * TAU;       // heading
+        this.speed = rand(3, 12);           // px / sec
+        this.turn = rand(-0.25, 0.25);      // rad / sec
+        this.seed = Math.random() * 1000;
+        this.scale = rand(1.25, 2.0);
+        this.alpha = rand(0.09, 0.225);
+        this.col = this.constructor.COLOR || STROKE;
+        this._sp = 1;
+      }
+      wander(dt, tSec) {
+        this.a += (this.turn + wobble(this.seed, tSec * 0.3) * 0.4) * dt;
+        const v = this.speed * this._sp * dt;
+        this.x += Math.cos(this.a) * v;
+        this.y += Math.sin(this.a) * v;
+        const m = 120;
+        if (this.x < -m) this.x = W + m; else if (this.x > W + m) this.x = -m;
+        if (this.y < -m) this.y = H + m; else if (this.y > H + m) this.y = -m;
+      }
+      stroke(w) {
+        ctx.lineWidth = w || 1;
+        ctx.strokeStyle = 'rgba(' + this.col + ', ' + this.alpha + ')';
+      }
+      fill(mult) {
+        ctx.fillStyle = 'rgba(' + this.col + ', ' + (this.alpha * (mult || 0.18)) + ')';
+        ctx.fill();
+      }
+      bloom(rad, mult) {
+        halo(this.x, this.y, rad, this.col, this.alpha * (mult || 0.35));
+      }
+    }
+
+    class Amoeba extends Microbe {
+      constructor() { super(); this.r = rand(24, 46); this.speed = rand(1.5, 5); this.pts = 12 + (Math.random() * 6 | 0); }
+      draw(tSec) {
+        this.bloom(this.r * this.scale * 2.4, 0.3);
+        this.stroke(1.1);
+        ctx.save(); ctx.translate(this.x, this.y);
+        ctx.beginPath();
+        for (let i = 0; i <= this.pts; i++) {
+          const ang = i / this.pts * TAU;
+          const wob = 1 + 0.32 * wobble(this.seed + i * 0.7, tSec * 0.8 + i * 0.3);
+          const pod = Math.pow(Math.max(0, Math.sin(ang * 3 + this.seed + tSec * 0.2)), 6) * 0.5;
+          const rr = this.r * this.scale * (wob + pod);
+          const px = Math.cos(ang) * rr, py = Math.sin(ang) * rr;
+          i ? ctx.lineTo(px, py) : ctx.moveTo(px, py);
+        }
+        ctx.closePath(); this.fill(0.16); ctx.stroke();
+        ctx.beginPath();
+        ctx.arc(wobble(this.seed + 5, tSec * 0.5) * this.r * 0.2,
+                wobble(this.seed + 9, tSec * 0.4) * this.r * 0.2,
+                this.r * this.scale * 0.16, 0, TAU);
+        ctx.stroke();
+        ctx.restore();
+      }
+    }
+
+    class Ciliate extends Microbe {
+      constructor() { super(); this.rx = rand(30, 52); this.ry = rand(13, 22); this.speed = rand(6, 16); }
+      draw(tSec) {
+        this.bloom(this.rx * this.scale * 2, 0.3);
+        this.stroke(1);
+        ctx.save(); ctx.translate(this.x, this.y); ctx.rotate(this.a);
+        const rx = this.rx * this.scale, ry = this.ry * this.scale;
+        ctx.beginPath(); ctx.ellipse(0, 0, rx, ry, 0, 0, TAU); this.fill(0.15); ctx.stroke();
+        ctx.beginPath();
+        const N = 34;
+        for (let i = 0; i < N; i++) {
+          const ang = i / N * TAU;
+          const ex = Math.cos(ang) * rx, ey = Math.sin(ang) * ry;
+          const beat = 3.5 + 2.5 * Math.sin(tSec * 6 + ang * 6 + this.seed);
+          ctx.moveTo(ex, ey);
+          ctx.lineTo(ex + Math.cos(ang) * beat, ey + Math.sin(ang) * beat);
+        }
+        ctx.stroke();
+        ctx.beginPath(); ctx.ellipse(rx * 0.15, 0, rx * 0.28, ry * 0.42, 0, 0, TAU); ctx.stroke();
+        ctx.restore();
+      }
+    }
+
+    class Rod extends Microbe {
+      constructor() { super(); this.len = rand(16, 30); this.wid = rand(5, 8); this.count = pick([1, 1, 2, 2, 3]); this.speed = rand(2, 7); this.jit = rand(3, 9); }
+      draw(tSec) {
+        this.bloom(this.len * this.scale * this.count * 0.9, 0.28);
+        this.stroke(1);
+        const fs = 'rgba(' + this.col + ', ' + (this.alpha * 0.16) + ')';
+        ctx.save();
+        ctx.translate(this.x + wobble(this.seed, tSec * 3) * this.jit,
+                      this.y + wobble(this.seed + 3, tSec * 3) * this.jit);
+        ctx.rotate(this.a);
+        const L = this.len * this.scale, Wd = this.wid * this.scale;
+        for (let c = 0; c < this.count; c++)
+          capsule((c - (this.count - 1) / 2) * (L + Wd * 0.4), 0, L, Wd, fs);
+        ctx.restore();
+      }
+    }
+
+    class Spirochete extends Microbe {
+      constructor() { super(); this.len = rand(60, 120); this.amp = rand(5, 10); this.waves = rand(3, 6); this.speed = rand(8, 20); }
+      draw(tSec) {
+        this.bloom(this.len * this.scale * 0.7, 0.22);
+        this.stroke(1);
+        ctx.save(); ctx.translate(this.x, this.y); ctx.rotate(this.a);
+        ctx.beginPath();
+        const L = this.len * this.scale, seg = 40;
+        for (let i = 0; i <= seg; i++) {
+          const u = i / seg, x = (u - 0.5) * L;
+          const y = Math.sin(u * this.waves * TAU - tSec * 8 + this.seed) * this.amp * Math.sin(u * Math.PI);
+          i ? ctx.lineTo(x, y) : ctx.moveTo(x, y);
+        }
+        ctx.stroke(); ctx.restore();
+      }
+    }
+
+    class Flagellate extends Microbe {
+      constructor() { super(); this.r = rand(6, 11); this.tail = rand(26, 46); this.speed = rand(10, 26); this.pulse = rand(2, 4); }
+      wander(dt, tSec) { this._sp = 1 + 0.5 * Math.sin(tSec * this.pulse + this.seed); super.wander(dt, tSec); }
+      draw(tSec) {
+        this.stroke(1);
+        ctx.save(); ctx.translate(this.x, this.y); ctx.rotate(this.a);
+        const R = this.r * this.scale;
+        ctx.beginPath(); ctx.ellipse(0, 0, R * 1.2, R, 0, 0, TAU); ctx.stroke();
+        ctx.beginPath(); ctx.moveTo(-R, 0);
+        const seg = 22, L = this.tail * this.scale;
+        for (let i = 1; i <= seg; i++) {
+          const u = i / seg;
+          ctx.lineTo(-R - u * L, Math.sin(u * 3 * TAU - tSec * 14 + this.seed) * 4 * u);
+        }
+        ctx.stroke(); ctx.restore();
+      }
+    }
+
+    class Cocci extends Microbe {
+      constructor() {
+        super(); this.n = 4 + (Math.random() * 7 | 0); this.r = rand(4, 7);
+        this.spread = rand(10, 20); this.speed = rand(1, 4);
+        this.blobs = Array.from({ length: this.n }, () => ({ a: Math.random() * TAU, d: Math.random() }));
+      }
+      draw(tSec) {
+        this.bloom((this.spread + this.r) * this.scale * 1.6, 0.3);
+        this.stroke(1);
+        ctx.save(); ctx.translate(this.x, this.y); ctx.rotate(this.a + tSec * 0.1);
+        for (const b of this.blobs) {
+          const d = (0.3 + b.d * 0.7) * this.spread * this.scale * (1 + 0.15 * Math.sin(tSec * 2 + b.a * 3 + this.seed));
+          ctx.beginPath();
+          ctx.arc(Math.cos(b.a) * d, Math.sin(b.a) * d, this.r * this.scale, 0, TAU);
+          this.fill(0.2); ctx.stroke();
+        }
+        ctx.restore();
+      }
+    }
+
+    class Diatom extends Microbe {
+      constructor() { super(); this.rx = rand(30, 50); this.ry = rand(10, 16); this.speed = rand(0.5, 2.5); this.turn = rand(-0.1, 0.1); }
+      draw(tSec) {
+        this.bloom(this.rx * this.scale * 1.7, 0.24);
+        this.stroke(1);
+        ctx.save();
+        ctx.translate(this.x, this.y);
+        ctx.rotate(this.a + Math.sin(tSec * 0.3 + this.seed) * 0.2);
+        const rx = this.rx * this.scale, ry = this.ry * this.scale;
+        ctx.beginPath();
+        ctx.moveTo(-rx, 0);
+        ctx.quadraticCurveTo(0, -ry, rx, 0);
+        ctx.quadraticCurveTo(0, ry, -rx, 0);
+        this.fill(0.14); ctx.stroke();
+        ctx.beginPath();
+        const lines = Math.max(4, Math.floor(rx / 4));
+        for (let i = -lines; i <= lines; i++) {
+          const x = i / lines * rx * 0.92;
+          const h = ry * Math.sqrt(Math.max(0, 1 - (x / rx) * (x / rx)));
+          ctx.moveTo(x, -h); ctx.lineTo(x, h);
+        }
+        ctx.stroke();
+        ctx.restore();
+      }
+    }
+
+    const CELL = '236, 231, 218';         // soft white (matches --ink)
+    Amoeba.COLOR = Ciliate.COLOR = Rod.COLOR =
+      Spirochete.COLOR = Cocci.COLOR = Diatom.COLOR = CELL;
+
+    const TYPES = [Amoeba, Amoeba, Ciliate, Ciliate, Rod, Rod, Spirochete, Cocci, Diatom];
+
+    function populate() {
+      const target = Math.max(7, Math.min(reduceMotion ? 18 : 38, Math.floor(W * H / 58000)));
+      organisms = Array.from({ length: target }, () => new (pick(TYPES))());
+      const moteCount = Math.min(260, Math.floor(W * H / 8000));
+      motes = Array.from({ length: moteCount }, () => {
+        const z = Math.pow(Math.random(), 1.6);   // depth 0..1, biased toward far/small
+        return {
+          x: Math.random() * W, y: Math.random() * H, z,
+          r: 0.8 + z * 3.4,                        // near motes are larger
+          a: (0.05 + z * 0.22) * rand(0.6, 1.15),  // ...brighter, with variance
+          vx: rand(-3, 3) * z, vy: rand(-3, 3) * z,
+          seed: Math.random() * 1000
+        };
+      });
+    }
+
+    function resize() {
+      DPR = Math.min(2, window.devicePixelRatio || 1);
+      W = window.innerWidth; H = window.innerHeight;
+      canvas.width = W * DPR; canvas.height = H * DPR;
+      canvas.style.width = W + 'px'; canvas.style.height = H + 'px';
+      ctx.setTransform(DPR, 0, 0, DPR, 0, 0);
+      populate();
+      if (reduceMotion) renderStatic();
+    }
+
+    function dish() {
+      if (Math.min(W, H) < 620) return;
+      const cx = W / 2, cy = H / 2, R = Math.max(W, H) * 0.62;
+      ctx.strokeStyle = 'rgba(' + STROKE + ', 0.075)';
+      ctx.lineWidth = 1;
+      ctx.beginPath(); ctx.arc(cx, cy, R, 0, TAU); ctx.stroke();
+      ctx.beginPath(); ctx.arc(cx, cy, R * 1.05, 0, TAU); ctx.stroke();
+    }
+
+    function renderStatic() {
+      ctx.clearRect(0, 0, W, H);
+      ctx.lineJoin = 'round'; ctx.lineCap = 'round';
+      dish();
+      for (const m of motes) drawMote(m);
+      ctx.globalAlpha = 1;
+      for (const o of organisms) o.draw(6);
+    }
+
+    function frame(now) {
+      if (!running) return;
+      const dt = Math.min(0.05, (now - last) / 1000); last = now;
+      const tSec = (now - t0) / 1000;
+      ctx.clearRect(0, 0, W, H);
+      ctx.lineJoin = 'round'; ctx.lineCap = 'round';
+      dish();
+      const [fx, fy] = flow(tSec);
+      for (const m of motes) {
+        m.x += (fx * 16 * m.z + m.vx + wobble(m.seed, tSec * 0.5) * 4 * m.z) * dt;
+        m.y += (fy * 16 * m.z + m.vy + wobble(m.seed + 7, tSec * 0.5) * 4 * m.z) * dt;
+        if (m.x < 0) m.x += W; else if (m.x > W) m.x -= W;
+        if (m.y < 0) m.y += H; else if (m.y > H) m.y -= H;
+        drawMote(m);
+      }
+      ctx.globalAlpha = 1;
+      for (const o of organisms) { o.wander(dt, tSec); o.draw(tSec); }
+      requestAnimationFrame(frame);
+    }
+
+    let rt;
+    window.addEventListener('resize', () => { clearTimeout(rt); rt = setTimeout(resize, 200); });
+    document.addEventListener('visibilitychange', () => {
+      if (document.hidden) { running = false; }
+      else if (!reduceMotion && !running) { running = true; last = performance.now(); requestAnimationFrame(frame); }
+    });
+
+    resize();
+    if (!reduceMotion) { last = t0 = performance.now(); requestAnimationFrame(frame); }
+  })();
   </script>
 
 </body>
