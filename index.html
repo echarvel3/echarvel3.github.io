@@ -157,6 +157,22 @@
     .btn-outline { border: 1px solid var(--rule); color: var(--ink); background: rgba(17,24,38,0.4); }
     .btn-outline:hover { border-color: var(--accent); color: var(--accent); }
 
+    /* fun little CRT on the Tutorials button */
+    .btn-tutorials { gap: 0.5rem; }
+    .btn-tutorials .pc-icon { width: 16px; height: 16px; display: block; overflow: visible; transform-origin: 50% 70%; }
+    .btn-tutorials .pc-cursor { animation: pc-blink 1.1s steps(1) infinite; }
+    .btn-tutorials:hover .pc-icon { animation: pc-wiggle 0.45s ease; }
+    @keyframes pc-blink { 0%, 49% { opacity: 1; } 50%, 100% { opacity: 0; } }
+    @keyframes pc-wiggle {
+      0%, 100% { transform: rotate(0); }
+      30%      { transform: rotate(-10deg) translateY(-1px); }
+      65%      { transform: rotate(7deg); }
+    }
+    @media (prefers-reduced-motion: reduce) {
+      .btn-tutorials .pc-cursor { animation: none; }
+      .btn-tutorials:hover .pc-icon { animation: none; }
+    }
+
     /* ── SECTION LAYOUT ── */
     section { padding: 5rem 3rem; max-width: 900px; margin: 0 auto; }
     #research { padding-top: 1.5rem; }
@@ -348,7 +364,6 @@
       <li><a href="#talks">Talks</a></li>
       <li><a href="#awards">Awards</a></li>
       <li><a href="#blog">Blog</a></li>
-      <li><a href="tutorials.html">Tutorials</a></li>
       <li><a href="#contact">Contact</a></li>
     </ul>
   </nav>
@@ -404,7 +419,17 @@
       <h1>Eduardo<br><em>Charvel</em></h1>
       <p class="hero-bio">Building computational tools for low-coverage population genomics and environmental DNA.</p>
       <div class="hero-links">
-        <a class="btn btn-primary" href="https://scholar.google.com/citations?user=Mjxe2NYAAAAJ" target="_blank">Google Scholar</a>
+        <a class="btn btn-primary btn-tutorials" href="tutorials.html">
+          <svg class="pc-icon" viewBox="0 0 24 24" aria-hidden="true">
+            <rect x="2" y="3" width="20" height="14" rx="1.5" fill="none" stroke="currentColor" stroke-width="1.8"/>
+            <line x1="9" y1="21" x2="15" y2="21" stroke="currentColor" stroke-width="1.8" stroke-linecap="round"/>
+            <line x1="12" y1="17" x2="12" y2="21" stroke="currentColor" stroke-width="1.8"/>
+            <rect x="4.5" y="5.5" width="15" height="9" fill="currentColor" opacity="0.16"/>
+            <line class="pc-cursor" x1="6.5" y1="9" x2="9.5" y2="9" stroke="currentColor" stroke-width="1.4" stroke-linecap="round"/>
+          </svg>
+          Tutorials
+        </a>
+        <a class="btn btn-outline" href="https://scholar.google.com/citations?user=Mjxe2NYAAAAJ" target="_blank">Google Scholar</a>
         <a class="btn btn-outline" href="mailto:edcharvel@ucsd.edu">Email</a>
         <a class="btn btn-outline" href="documents/EduardoCharvel_CV.pdf" download>Download CV</a>
       </div>
@@ -785,8 +810,8 @@
         this.speed = rand(3, 12);           // px / sec
         this.turn = rand(-0.25, 0.25);      // rad / sec
         this.seed = Math.random() * 1000;
-        this.scale = rand(0.75, 1.5);
-        this.alpha = rand(0.12, 0.3);
+        this.scale = rand(1.25, 2.0);
+        this.alpha = rand(0.09, 0.225);
         this.col = this.constructor.COLOR || STROKE;
         this._sp = 1;
       }
@@ -958,17 +983,14 @@
       }
     }
 
-    Amoeba.COLOR     = '230, 169, 77';    // amber (the anchor)
-    Ciliate.COLOR    = '120, 190, 180';   // teal
-    Rod.COLOR        = '206, 122, 84';    // rust
-    Spirochete.COLOR = '182, 197, 122';   // pale chartreuse
-    Cocci.COLOR      = '172, 142, 202';   // violet
-    Diatom.COLOR     = '221, 201, 142';   // pale gold
+    const CELL = '236, 231, 218';         // soft white (matches --ink)
+    Amoeba.COLOR = Ciliate.COLOR = Rod.COLOR =
+      Spirochete.COLOR = Cocci.COLOR = Diatom.COLOR = CELL;
 
     const TYPES = [Amoeba, Amoeba, Ciliate, Ciliate, Rod, Rod, Spirochete, Cocci, Diatom];
 
     function populate() {
-      const target = Math.max(12, Math.min(reduceMotion ? 35 : 75, Math.floor(W * H / 30000)));
+      const target = Math.max(7, Math.min(reduceMotion ? 18 : 38, Math.floor(W * H / 58000)));
       organisms = Array.from({ length: target }, () => new (pick(TYPES))());
       const moteCount = Math.min(260, Math.floor(W * H / 8000));
       motes = Array.from({ length: moteCount }, () => {
