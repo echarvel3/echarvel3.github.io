@@ -51,6 +51,17 @@
       text-shadow: 0 0 8px var(--accent), 0 0 16px var(--accent-soft);
     }
 
+    /* inline links in running text: amber, underlined + glowing on hover */
+    .about-text a, .method-card a.paper-link, .award-name a, .post-body a {
+      color: var(--accent); border-bottom: none; text-decoration: underline transparent; text-underline-offset: 3px;
+    }
+    .about-text a:hover, .about-text a:focus-visible,
+    .method-card a.paper-link:hover, .method-card a.paper-link:focus-visible,
+    .award-name a:hover, .award-name a:focus-visible,
+    .post-body a:hover, .post-body a:focus-visible {
+      text-decoration-color: var(--accent);
+    }
+
     /* ── GEISEL LIBRARY FIXED BACKGROUND ── */
     body::before {
       content: ''; position: fixed; inset: 0; z-index: -2;
@@ -169,7 +180,7 @@
 
     /* ── SECTION LAYOUT ── */
     section { padding: 5rem 3rem; max-width: 900px; margin: 0 auto; }
-    #research { padding-top: 1.5rem; }
+    #research { margin-top: 3rem; scroll-margin-top: 6rem; }
 
     /* ONE heading per section, integrated with the divider line */
     .sec-head { display: flex; align-items: center; gap: 1rem; margin-bottom: 2.5rem; }
@@ -202,7 +213,7 @@
     .section-contact { padding-bottom: 2rem; }
 
     /* ── METHODS GRID ── */
-    .methods-grid { display: grid; grid-template-columns: 1fr 1fr; gap: 1px; background: var(--rule); border: 1px solid var(--rule); }
+    .methods-grid { display: grid; grid-template-columns: repeat(3, 1fr); gap: 1px; background: var(--rule); border: 1px solid var(--rule); }
     .method-card {
       padding: 2rem; position: relative; overflow: hidden;
     }
@@ -211,12 +222,13 @@
     .method-tag { font-family: var(--mono); font-size: 0.62rem; letter-spacing: 0.1em; text-transform: uppercase; color: var(--accent); background: var(--accent-soft); display: inline-block; padding: 0.2rem 0.55rem; margin-bottom: 1rem; }
     .method-card h3 { font-family: var(--serif); font-size: 1.35rem; font-weight: 400; margin-bottom: 0.75rem; line-height: 1.2; color: var(--ink); }
     .method-card p { font-size: 0.88rem; color: var(--muted); line-height: 1.75; }
-    .method-card a { display: inline-block; margin-top: 1rem; font-family: var(--mono); font-size: 0.7rem; letter-spacing: 0.06em; text-transform: uppercase; color: var(--accent); }
+    .method-card a { display: inline-block; margin-top: 1rem; margin-right: 1.25rem; font-family: var(--mono); font-size: 0.7rem; letter-spacing: 0.06em; text-transform: uppercase; color: var(--accent); }
+    .method-card a.paper-link { display: inline; margin: 0; font: inherit; letter-spacing: inherit; text-transform: none; }
     .method-card a:hover { text-decoration: underline; }
     .method-card a:focus-visible { outline: 2px solid var(--accent); outline-offset: 2px; }
 
     /* ── PUBLICATIONS ── */
-    .pub-item { padding: 1.75rem 0; border-bottom: 1px solid var(--rule); display: grid; grid-template-columns: 44px 1fr; gap: 0 1.5rem; }
+    .pub-item { scroll-margin-top: 6rem; padding: 1.75rem 0; border-bottom: 1px solid var(--rule); display: grid; grid-template-columns: 44px 1fr; gap: 0 1.5rem; }
     .pub-year { font-family: var(--mono); font-size: 0.72rem; color: var(--accent); opacity: 0.85; padding-top: 0.2rem; }
     .pub-title { font-family: var(--serif); font-size: 1.05rem; line-height: 1.35; margin-bottom: 0.4rem; color: var(--ink); }
     .pub-authors { font-size: 0.84rem; color: var(--muted); margin: 0.35rem 0; }
@@ -239,9 +251,10 @@
     .award-card { padding: 1.5rem; }
     .award-year { font-family: var(--mono); font-size: 0.62rem; color: var(--accent); letter-spacing: 0.08em; margin-bottom: 0.4rem; }
     .award-name { font-size: 0.88rem; color: var(--ink); line-height: 1.4; }
+    .award-name a:focus-visible { outline: 2px solid var(--accent); outline-offset: 2px; }
 
     /* ── ABOUT ── */
-    .about-grid { display: grid; grid-template-columns: 1.3fr 0.7fr; gap: 3rem; align-items: start; }
+    .about-grid { display: grid; grid-template-columns: 1fr; }
     .about-text p { font-size: 0.95rem; color: var(--muted); line-height: 1.85; margin-bottom: 1rem; }
     .about-text p strong { color: var(--ink); font-weight: 500; }
     .about-photo-caption { font-family: var(--mono); font-size: 0.62rem; letter-spacing: 0.08em; color: var(--muted); margin: 0.5rem 0; }
@@ -288,8 +301,7 @@
     .post-media { justify-self: end; }
     .post-photo { width: 180px; aspect-ratio: 4/3; object-fit: cover; object-position: center 55%; filter: saturate(0.95); display: block; border: 1px solid var(--rule); }
     .post-body { font-size: 0.9rem; color: var(--muted); line-height: 1.75; }
-    .post-body a { color: var(--accent); border-bottom: 1px solid transparent; transition: border-color 0.2s; }
-    .post-body a:hover { border-color: var(--accent); }
+    .post-body a { transition: text-decoration-color 0.2s; }
     .post-body a:focus-visible { outline: 2px solid var(--accent); outline-offset: 2px; }
 
     footer { text-align: center; padding: 2.5rem; font-family: var(--mono); font-size: 0.66rem; color: var(--muted); opacity: 0.5; letter-spacing: 0.06em; }
@@ -334,6 +346,26 @@
       .nav-links a { font-size: 0.66rem; }
       .hero { padding: 7rem 1.25rem 3.5rem; }
     }
+
+    /* ── WIDE SCREENS: blog becomes a sticky side column ── */
+    @media (min-width: 1280px) {
+      body { padding-right: 380px; }
+      .nav-blog { display: none; }
+      #blog {
+        position: fixed; top: 5.25rem; right: 1.5rem; bottom: 1.5rem; width: 340px;
+        max-width: none; margin: 0; padding: 1.25rem 0.5rem 1.25rem 1.25rem; z-index: 50;
+        display: flex; flex-direction: column;
+        background: var(--panel); backdrop-filter: blur(var(--blur-lg));
+        border: 1px solid var(--rule); border-top: 2px solid var(--accent);
+      }
+      #blog .sec-head { margin-bottom: 1rem; padding-right: 0.75rem; }
+      #blog .sec-head h2 { font-size: 1.5rem; }
+      #blog .blog-scroll { flex: 1; max-height: none; margin-top: 0; min-height: 0; }
+      #blog .post { padding: 1.1rem 1.15rem; }
+      #blog .post-grid { grid-template-columns: 1fr; }
+      #blog .post-media { justify-self: stretch; }
+      #blog .post-photo { width: 100%; }
+    }
   </style>
 </head>
 <body>
@@ -350,12 +382,11 @@
   <nav>
     <span class="nav-name">echarvel3</span>
     <ul class="nav-links">
-      <li><a href="#research">Research</a></li>
       <li><a href="#about">About</a></li>
       <li><a href="#publications">Publications</a></li>
       <li><a href="#talks">Talks</a></li>
       <li><a href="#awards">Awards</a></li>
-      <li><a href="#blog">Blog</a></li>
+      <li class="nav-blog"><a href="#blog">Blog</a></li>
       <li><a href="#contact">Contact</a></li>
       <li><a class="nav-tutorials" href="tutorials.html">Tutorials</a></li>
     </ul>
@@ -429,61 +460,30 @@
     </div>
   </div>
 
-  <!-- RESEARCH -->
-  <section id="research">
-    <div class="sec-head reveal">
-      <svg class="branch-glyph" viewBox="0 0 18 12" aria-hidden="true"><use href="#branch-glyph-icon" /></svg>
-      <h2>Research</h2>
-      <span class="hrule"></span>
-    </div>
-    <div class="methods-grid">
-      <div class="method-card card reveal">
-        <span class="method-tag">Population Genomics</span>
-        <h3>ReSkmer</h3>
-        <p>Models genome repetitiveness, coverage, and sequencing error to compute accurate k-mer-based genomic distances from low-coverage genome skims. Published in <em>Genome Biology</em> (2026).</p>
-        <a href="https://doi.org/10.1186/s13059-026-04108-9" target="_blank">Read paper →</a>
-      </div>
-      <div class="method-card card reveal delay-80ms">
-        <span class="method-tag">Population Genomics</span>
-        <h3>DipSkmer</h3>
-        <p>Reference-free population genomics with diploid genome skims — extending the genome skimming framework to explicitly model heterozygosity for accessible nucleotide diversity estimation. Preprint Available in BioRxiv 2026.</p>
-        <a href="https://doi.org/10.64898/2026.06.05.730460" target="_blank">Read paper →</a>
-      </div>
-      <div class="method-card card reveal delay-160ms">
-        <span class="method-tag">Phylogenomics</span>
-        <h3>EM-based phylogenetic dating</h3>
-        <p>Expectation-maximization approach enabling phylogenetic dating under a categorical rate model, improving accuracy of divergence time estimation. <em>Systematic Biology</em> (2024).</p>
-        <a href="https://doi.org/10.1093/sysbio/syae034" target="_blank">Read paper →</a>
-      </div>
-      <div class="method-card card reveal delay-240ms">
-        <span class="method-tag">Conservation</span>
-        <h3>eDNA &amp; marine conservation</h3>
-        <p>Collaboration with the Field Museum and Minderoo Foundation to improve detection of environmental DNA for population health tracking and marine species conservation.</p>
-      </div>
-    </div>
-  </section>
-
-  <!-- ABOUT -->
+  <!-- ABOUT & RESEARCH -->
   <section id="about">
     <div class="sec-head reveal">
       <svg class="branch-glyph" viewBox="0 0 18 12" aria-hidden="true"><use href="#branch-glyph-icon" /></svg>
-      <h2>About</h2>
+      <h2>About &amp; Research</h2>
       <span class="hrule"></span>
     </div>
     <div class="about-grid">
       <div class="about-text reveal">
-        <p>I'm a PhD Candidate in <strong><a href="https://bioinformatics.ucsd.edu/node/21209" target="_blank">Bioinformatics &amp; Systems Biology at UC San Diego</a></strong>, working in the <strong><a href="http://eceweb.ucsd.edu/~smirarab/" target="_blank">Mirarab Lab</a></strong>. My research focuses on building reference-free, alignment-free genomic tools that make population genomics accessible without expensive references and high coverage, and modeling how complex genome characteristics (such as repetitiveness and diploidy) interact with and bias the Jaccard Index.</p>
-        <p>I am also in active collaboration with the Field Museum and the Minderoo Foundation to develop environmental DNA methods for population monitoring and conservation.</p>
+        <p>I'm a PhD Candidate in <strong><a href="https://bioinformatics.ucsd.edu/node/21209" target="_blank">Bioinformatics &amp; Systems Biology at UC San Diego</a></strong>, working in the <strong><a href="http://eceweb.ucsd.edu/~smirarab/" target="_blank">Mirarab Lab</a></strong>.</p>
       </div>
-      <div class="about-interests reveal delay-100ms">
-        <ul class="interests-list">
-          <li>Phylogenomics &amp; molecular evolution</li>
-          <li>Population genetics &amp; genomics</li>
-          <li>Conservation genomics</li>
-          <li>Genome skimming methods</li>
-          <li>Alignment-free sequence analysis</li>
-          <li>Metagenomics &amp; eDNA</li>
-        </ul>
+    </div>
+    <div class="methods-grid" id="research">
+      <div class="method-card card reveal">
+        <h3>Genome Skimming</h3>
+        <p>K-mer methods for low-coverage genome skims: <a class="paper-link" href="#pub-reskmer"><strong>ReSkmer</strong></a> estimates genomic distances and <a class="paper-link" href="#pub-dipskmer"><strong>DipSkmer</strong></a> models heterozygosity for nucleotide diversity.</p>
+      </div>
+      <div class="method-card card reveal delay-80ms">
+        <h3>Phylogenetics</h3>
+        <p><a class="paper-link" href="#pub-sysbio"><strong>EM-Date</strong></a> uses expectation-maximization to enable phylogenetic dating under a categorical rate model, improving the accuracy of divergence time estimation.</p>
+      </div>
+      <div class="method-card card reveal delay-160ms">
+        <h3>Metagenomics</h3>
+        <p>Collaboration with the Field Museum and Minderoo Foundation to improve detection of environmental DNA for population health tracking and marine species conservation.</p>
       </div>
     </div>
   </section>
@@ -496,17 +496,27 @@
       <span class="hrule"></span>
     </div>
 
-    <div class="pub-item reveal">
+    <div class="pub-item reveal" id="pub-dipskmer">
       <span class="pub-year">2026</span>
       <div>
         <p class="pub-title">DipSkmer: Reference-free population genomics with diploid genome skims</p>
         <p class="pub-authors"><strong>Charvel E.</strong>, Alves Monteiro H.J., Mirarab S., Bafna V.</p>
-        <p class="pub-venue">bioRxiv (preprint)</p>
-        <a class="pub-link" href="https://doi.org/10.64898/2026.06.05.730460" target="_blank">doi →</a>
+        <p class="pub-venue">PLOS Computational Biology, 22(10): e1014823</p>
+        <a class="pub-link" href="https://doi.org/10.1371/journal.pcbi.1014823" target="_blank">doi →</a>
       </div>
     </div>
 
     <div class="pub-item reveal">
+      <span class="pub-year">2026</span>
+      <div>
+        <p class="pub-title">The Vertebrate Genomes Project Phase I: A global reference genome resource</p>
+        <p class="pub-authors">Formenti G., Absolon D.E., Abueg L.A.L., et al., <strong>Charvel E.</strong>, et al., Jarvis E.D., the Vertebrate Genomes Project Consortium Phase I</p>
+        <p class="pub-venue">bioRxiv (preprint)</p>
+        <a class="pub-link" href="https://doi.org/10.64898/2026.06.24.732306" target="_blank">doi →</a>
+      </div>
+    </div>
+
+    <div class="pub-item reveal" id="pub-reskmer">
       <span class="pub-year">2026</span>
       <div>
         <p class="pub-title">ReSkmer: modeling repeats allows k-mer-based alignment-free methods to calculate population genomic distances</p>
@@ -516,7 +526,7 @@
       </div>
     </div>
 
-    <div class="pub-item reveal">
+    <div class="pub-item reveal" id="pub-sysbio">
       <span class="pub-year">2024</span>
       <div>
         <p class="pub-title">Expectation-maximization enables phylogenetic dating under a categorical rate model</p>
@@ -544,6 +554,16 @@
       <svg class="branch-glyph" viewBox="0 0 18 12" aria-hidden="true"><use href="#branch-glyph-icon" /></svg>
       <h2>Selected Talks</h2>
       <span class="hrule"></span>
+    </div>
+
+    <div class="talk-item reveal">
+      <span class="talk-year">2026</span>
+      <div>
+        <p class="talk-title">Modeling Repeats and Diploidy in Low Coverage, Reference-Free, Population Genomics</p>
+        <p class="talk-venue">SACNAS Annual Conference · Long Beach, California</p>
+        <span class="pub-tag">Poster</span>
+        <a class="pub-link" href="documents/Charvel_SACNAS2026_Poster.pdf" target="_blank">View poster →</a>
+      </div>
     </div>
 
     <div class="talk-item reveal">
@@ -637,6 +657,31 @@
       <!--    </p>                                                         -->
       <!--  </article>                                                     -->
       <!-- ============================================================= -->
+
+      <article class="post card">
+        <p class="post-date">October 2026</p>
+        <div class="post-grid">
+          <div class="post-content">
+            <h3 class="post-title">Presenting DipSkmer at SACNAS</h3>
+            <p class="post-body">I presented DipSkmer at the SACNAS Annual Conference alongside the UCSD SACNAS group. Once a SACNISTA, always a SACNISTA: we left inspired and ready to bring that energy back to campus. <a href="https://www.instagram.com/p/DfQZ5HOvnI7/" target="_blank">See the post →</a></p>
+          </div>
+          <div class="post-media">
+            <img class="post-photo" src="images/photo_sacnas.jpg" alt="The UCSD SACNAS group outside the conference venue" style="object-position: center 30%;" />
+          </div>
+        </div>
+      </article>
+
+      <article class="post card">
+        <p class="post-date">October 2026</p>
+        <h3 class="post-title">DipSkmer published in PLOS Computational Biology</h3>
+        <p class="post-body">DipSkmer, our method for reference-free population genomics with diploid genome skims, is now published. It explicitly models heterozygosity, making nucleotide diversity estimation accessible without assembly or a reference. <a href="https://doi.org/10.1371/journal.pcbi.1014823" target="_blank">Read the paper →</a></p>
+      </article>
+
+      <article class="post card">
+        <p class="post-date">October 2026</p>
+        <h3 class="post-title">Sloan Scholars Academic Writing Retreat</h3>
+        <p class="post-body">I attended the first Sloan Scholars Network Academic Writing Retreat for dissertation-stage scholars. Fellow attendee Sophielle Silvers wrote a reflection on the weekend. <a href="https://sloan-scholars.ssrc.org/news/11585559" target="_blank">Read her recap →</a></p>
+      </article>
 
       <article class="post card">
         <p class="post-date">June 2026</p>
