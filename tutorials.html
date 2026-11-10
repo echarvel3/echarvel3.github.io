@@ -174,22 +174,31 @@
     .tut-title { font-family: var(--serif); font-size: 1.25rem; font-weight: 400; color: var(--ink); line-height: 1.25; }
     .tut-desc { font-size: 0.84rem; color: var(--muted); margin-top: 0.35rem; line-height: 1.6; }
 
-    .tutorial-body { padding: 0.5rem 0.25rem 2.5rem 3.35rem; }
+    .tutorial-body {
+      margin: 0.25rem 0 1.5rem 3.35rem; padding: 1.75rem 2rem 1rem;
+      background: rgba(11, 16, 24, 0.9); border: 1px solid var(--rule);
+      backdrop-filter: blur(8px);
+    }
     .tutorial-body p { font-size: 0.95rem; color: var(--muted); line-height: 1.85; margin-bottom: 1.1rem; }
     .tutorial-body p strong { color: var(--ink); font-weight: 500; }
+
+    .tutorial-body code {
+      font-family: var(--mono); font-size: 0.82em; color: var(--ink);
+      background: var(--panel-solid); border: 1px solid var(--rule); padding: 0.05em 0.35em;
+    }
+    .tutorial-body p a, .callout a { color: var(--accent); text-decoration: underline transparent; text-underline-offset: 3px; transition: text-decoration-color 0.2s; }
+    .tutorial-body p a:hover, .callout a:hover { text-decoration-color: var(--accent); }
 
     .tutorial-body h4.subhead {
       font-family: var(--serif); font-size: 1.15rem; font-weight: 400; color: var(--ink);
       margin: 1.75rem 0 0.9rem;
     }
 
-    .step { display: grid; grid-template-columns: 34px 1fr; gap: 0 1.25rem; margin-bottom: 1.5rem; }
+    .step { display: grid; grid-template-columns: 2rem 1fr; gap: 0 0.75rem; margin-bottom: 1.5rem; }
     .step-num {
-      width: 34px; height: 34px; border-radius: 50%;
-      background: var(--accent-soft); color: var(--accent);
-      font-family: var(--mono); font-size: 0.85rem; font-weight: 500;
-      display: flex; align-items: center; justify-content: center;
-      border: 1px solid var(--rule);
+      color: var(--accent); opacity: 0.8;
+      font-family: var(--mono); font-size: 0.72rem; letter-spacing: 0.06em;
+      padding-top: 0.28rem;
     }
     .step-content h5 { font-size: 0.98rem; font-weight: 500; color: var(--ink); margin-bottom: 0.4rem; }
     .step-content p { font-size: 0.88rem; color: var(--muted); line-height: 1.75; margin-bottom: 0; }
@@ -220,8 +229,8 @@
       nav { padding: 0.6rem 1.25rem; }
       header.page-head { padding: 7rem 1.5rem 2.5rem; }
       main { padding: 0 1.5rem 4rem; }
-      .tutorial-body { padding-left: 0.25rem; }
-      .step { grid-template-columns: 30px 1fr; }
+      .tutorial-body { margin-left: 0; padding: 1.25rem 1.1rem 0.5rem; }
+      .step { grid-template-columns: 1.75rem 1fr; }
       /* tap-friendly on mobile: panel opens on tap via :focus-within, positioned to fit the viewport */
       .nav-methods-panel { right: -1.25rem; left: -1.25rem; gap: 0.75rem; padding: 1.1rem; justify-content: space-around; }
       .methods-strip-item { width: auto; }
@@ -300,20 +309,94 @@
     <!-- ═══════════════════════════════════════════════════════════════ -->
     <div class="accordion">
 
-      <details class="tutorial placeholder" id="tut-contamination">
+      <details class="tutorial" id="tut-contamination">
         <summary>
           <span class="tut-chevron" aria-hidden="true">
             <svg viewBox="0 0 12 12" fill="none"><path d="M6 1 V11 M1 6 H11" stroke-linecap="round"/></svg>
           </span>
           <span class="tut-summary-text">
-            <span class="tut-tag">Coming soon</span>
-            <div class="tut-title">Genome Skim Pre-processing Pipeline</div>
-            <p class="tut-desc">Detecting and filtering non-target DNA (microbial, human, or cross-sample) from shallow genome skim data before downstream analysis.</p>
+            <span class="tut-tag">Pre-processing</span>
+            <div class="tut-title">Decontaminating Genome Skims</div>
+            <p class="tut-desc">Clean reads, remove bacterial, archaeal and human contamination, then compute a Skmer distance matrix.</p>
           </span>
           <img class="tut-summary-logo" src="images/contamination_logo.png" alt="Genome skimming contamination logo" loading="lazy" />
         </summary>
         <div class="tutorial-body">
-          <p><em>Write-up coming soon — this tutorial will cover taxonomic screening of genome skims, common contamination sources in field-collected samples, and filtering strategies before running ReSkmer/DipSkmer.</em></p>
+          <p>Genome skims from field-collected or museum samples often carry DNA that isn't from your target: bacteria, archaea, and human handling. Left in, these reads distort k-mer-based distances. This walkthrough filters them out in three steps and then builds a distance matrix with Skmer. It's adapted from my <a href="https://github.com/echarvel3/skmer_slurm_pipeline" target="_blank">skmer_slurm_pipeline</a>, which runs the same steps in parallel on a cluster.</p>
+
+          <div class="callout">
+            <strong>Before you start</strong>
+            You'll need paired-end FASTQ files, BBTools, CONSULT-II with a bacteria/archaea library (the WoL reference phylogeny, about 18 GB, is recommended), Kraken2 with a human database, and Skmer.
+          </div>
+
+          <h4 class="subhead">Step-by-step</h4>
+
+          <div class="step">
+            <div class="step-num">01</div>
+            <div class="step-content">
+              <h5>Clean the reads</h5>
+              <p>Trim adapters and low-quality ends with <code>bbduk.sh</code> from BBTools. The pipeline's wrapper script also deduplicates with <code>dedupe.sh</code>.</p>
+            </div>
+          </div>
+          <pre class="code-block">mkdir -p clean
+bbduk.sh in1=sampleA_1.fastq in2=sampleA_2.fastq \
+    out=clean/sampleA.fastq \
+    ref=adapters.fa ktrim=r k=23 mink=11 hdist=1 tpe tbo qtrim=r trimq=10</pre>
+
+          <div class="step">
+            <div class="step-num">02</div>
+            <div class="step-content">
+              <h5>Remove bacterial and archaeal reads</h5>
+              <p>CONSULT-II checks each read against the library. Reads that match are contamination, and the ones that don't are kept as unclassified.</p>
+            </div>
+          </div>
+          <pre class="code-block">mkdir -p no_microbes
+consult_search \
+    -i /path/to/CONSULT-II/library/ \
+    -o no_microbes \
+    --query-path clean \
+    --number-of-matches 2 \
+    --thread-count 10 \
+    --unclassified-out no_microbes</pre>
+
+          <div class="step">
+            <div class="step-num">03</div>
+            <div class="step-content">
+              <h5>Remove human reads</h5>
+              <p>Kraken2 classifies each file against a human database. Keep only the unclassified reads.</p>
+            </div>
+          </div>
+          <pre class="code-block"><span class="comment"># build the human database once (see the Kraken2 manual)</span>
+kraken2-build --download-taxonomy --db human_lib
+kraken2-build --download-library human --db human_lib
+kraken2-build --build --db human_lib --threads 10
+
+mkdir -p decontaminated
+for f in no_microbes/*.fastq; do
+    kraken2 --db human_lib "$f" --threads 10 \
+        --unclassified-out "decontaminated/$(basename "$f")"
+done</pre>
+
+          <div class="step">
+            <div class="step-num">04</div>
+            <div class="step-content">
+              <h5>Compute the distance matrix</h5>
+              <p>Run Skmer on a folder of decontaminated reads, one FASTQ file per sample. To try it first, use the test data in the <code>data</code> folder of the Skmer repository.</p>
+            </div>
+          </div>
+          <pre class="code-block"><span class="comment"># try it on Skmer's test data</span>
+git clone https://github.com/shahab-sarmashghi/Skmer.git
+cd Skmer/data
+skmer reference ref_dir -p 4
+
+<span class="comment"># then on your own reads</span>
+skmer reference decontaminated -p 4</pre>
+          <p>The pairwise distances are written to <code>ref-dist-mat.txt</code> in the working directory, as a square matrix with one row and column per sample. Add <code>-t</code> if you want Jukes-Cantor-transformed distances for building a tree.</p>
+
+          <div class="callout">
+            <strong>Running many samples</strong>
+            For lots of samples on a cluster, the <a href="https://github.com/echarvel3/skmer_slurm_pipeline" target="_blank">skmer_slurm_pipeline</a> repository runs each stage as a parallel SLURM array job.
+          </div>
         </div>
       </details>
 
@@ -365,7 +448,7 @@ pip install reskmer</pre>
           <h4 class="subhead">Step-by-step</h4>
 
           <div class="step">
-            <div class="step-num">1</div>
+            <div class="step-num">01</div>
             <div class="step-content">
               <h5>Prepare your input reads</h5>
               <p>Place your FASTQ files (gzipped is fine) in a working directory. ReSkmer works directly on raw reads — no trimming or assembly required for a first pass.</p>
@@ -373,7 +456,7 @@ pip install reskmer</pre>
           </div>
 
           <div class="step">
-            <div class="step-num">2</div>
+            <div class="step-num">02</div>
             <div class="step-content">
               <h5>Run the sketch step</h5>
               <p>Generate a k-mer sketch for each sample. This is the compressed representation ReSkmer uses for all downstream distance calculations.</p>
@@ -385,7 +468,7 @@ reskmer sketch sample1.fastq.gz -o sample1.sketch
 reskmer sketch sample2.fastq.gz -o sample2.sketch</pre>
 
           <div class="step">
-            <div class="step-num">3</div>
+            <div class="step-num">03</div>
             <div class="step-content">
               <h5>Estimate pairwise distance</h5>
               <p>Compare two or more sketches to get repeat-corrected genomic distance estimates, accounting for coverage and sequencing error.</p>
@@ -395,7 +478,7 @@ reskmer sketch sample2.fastq.gz -o sample2.sketch</pre>
           <pre class="code-block">reskmer distance sample1.sketch sample2.sketch</pre>
 
           <div class="step">
-            <div class="step-num">4</div>
+            <div class="step-num">04</div>
             <div class="step-content">
               <h5>Interpret the output</h5>
               <p>ReSkmer reports a corrected genomic distance alongside confidence estimates — how this compares to traditional alignment-based distances is worth understanding before drawing conclusions.</p>
