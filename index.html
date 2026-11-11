@@ -90,9 +90,9 @@
 
     /* ── HERO ── */
     .hero {
-      min-height: min(100vh, 46rem); position: relative; overflow: hidden;
+      position: relative; overflow: hidden;
       display: flex; align-items: center;
-      padding: 8rem 3rem 3rem; max-width: 1100px; margin: 0 auto;
+      padding: 8rem 3rem 1.5rem; max-width: 1100px; margin: 0 auto;
     }
     /* seat the text on the left with a soft scrim, keep the tree side clearer */
     .hero::before {
@@ -113,14 +113,15 @@
     }
     .hero-id-text { display: flex; flex-direction: column; gap: 0.55rem; }
     .profile-bubble {
-      position: relative; width: 140px; height: 140px; border-radius: 50%;
+      position: absolute; right: 6.5rem; top: 50%; margin-top: -150px;
+      width: 300px; height: 300px; border-radius: 50%; z-index: 1;
       overflow: visible; display: inline-block; flex-shrink: 0;
       transition: transform 0.25s ease;
     }
     .profile-bubble .avatar {
       display: block;
-      width: 140px; height: 140px; border-radius: 50%; overflow: hidden;
-      border: 2px solid var(--accent); box-shadow: 0 6px 26px rgba(0,0,0,0.45);
+      width: 100%; height: 100%; border-radius: 50%; overflow: hidden;
+      border: 3px solid var(--accent); box-shadow: 0 10px 40px rgba(0,0,0,0.55);
     }
     .profile-bubble .avatar img {
       width: 100%; height: 100%; object-fit: cover; object-position: center 35%;
@@ -128,13 +129,13 @@
     }
     .gh-badge {
       position: absolute; right: -2px; bottom: -2px;
-      width: 44px; height: 44px; border-radius: 50%;
+      width: 56px; height: 56px; border-radius: 50%;
       background: var(--accent); color: #0b1018;
       display: flex; align-items: center; justify-content: center;
       border: 2px solid var(--bg); box-shadow: 0 3px 10px rgba(0,0,0,0.5);
     }
-    .gh-badge svg { width: 24px; height: 24px; }
-    .profile-bubble:hover { transform: translateY(-3px) scale(1.03); }
+    .gh-badge svg { width: 30px; height: 30px; }
+    .profile-bubble:hover { transform: translateY(-3px) scale(1.02); }
     .profile-bubble:focus-visible { outline: 2px solid var(--accent); outline-offset: 2px; border-radius: 50%; }
     .gh-caption {
       font-family: var(--mono); font-size: 0.72rem;
@@ -151,7 +152,7 @@
       margin-bottom: 1.5rem; display: flex; align-items: center; gap: 0.8rem;
     }
     .hero-eyebrow::before { content: ''; display: inline-block; width: 28px; height: 1px; background: var(--accent); }
-    h1 { font-family: var(--serif); font-size: clamp(3rem, 8vw, 5.8rem); font-weight: 400; line-height: 1.05; letter-spacing: -0.01em; margin-bottom: 2rem; text-shadow: 0 2px 30px rgba(0,0,0,0.4); }
+    h1 { font-family: var(--serif); font-size: clamp(3rem, 8vw, 5.8rem); font-weight: 400; line-height: 1.05; letter-spacing: -0.01em; margin-bottom: 1.25rem; text-shadow: 0 2px 30px rgba(0,0,0,0.4); }
     h1 em { font-style: italic; color: var(--accent); }
     .hero-bio { font-size: 1.08rem; font-weight: 300; color: #c9ccd6; max-width: 500px; line-height: 1.85; margin-bottom: 2.5rem; }
     .hero-links { display: flex; flex-wrap: wrap; gap: 0.75rem; }
@@ -161,6 +162,10 @@
     .btn-primary:hover { background: #f0bd6a; }
     .btn-outline { border: 1px solid var(--rule); color: var(--ink); background: rgba(17,24,38,0.4); }
     .btn-outline:hover { border-color: var(--accent); color: var(--accent); }
+    .hero-links-break { flex-basis: 100%; height: 0; }
+    .btn-cv { gap: 0.5rem; }
+    .btn-cv .cv-icon { width: 16px; height: 16px; display: block; overflow: visible; transform-origin: 50% 70%; }
+    .btn-cv:hover .cv-icon { animation: pc-wiggle 0.45s ease; }
 
     /* fun little CRT on the Tutorials button */
     .btn-tutorials { gap: 0.5rem; }
@@ -176,10 +181,12 @@
     @media (prefers-reduced-motion: reduce) {
       .btn-tutorials .pc-cursor { animation: none; }
       .btn-tutorials:hover .pc-icon { animation: none; }
+      .btn-cv:hover .cv-icon { animation: none; }
     }
 
     /* ── SECTION LAYOUT ── */
     section { padding: 5rem 3rem; max-width: 900px; margin: 0 auto; }
+    #about { padding-top: 2rem; }
     #research { margin-top: 3rem; scroll-margin-top: 6rem; }
 
     /* ONE heading per section, integrated with the divider line */
@@ -306,6 +313,13 @@
 
     footer { text-align: center; padding: 2.5rem; font-family: var(--mono); font-size: 0.66rem; color: var(--muted); opacity: 0.5; letter-spacing: 0.06em; }
 
+    @media (max-width: 980px) {
+      .hero { flex-direction: column; align-items: flex-start; justify-content: center; }
+      .profile-bubble { position: relative; right: auto; top: auto; margin: 0 0 1.75rem; width: 180px; height: 180px; }
+      .gh-badge { width: 44px; height: 44px; }
+      .gh-badge svg { width: 24px; height: 24px; }
+    }
+
     @media (max-width: 640px) {
       /* stack the nav so the name doesn't collide with the links */
       nav {
@@ -427,21 +441,19 @@
       <circle cx="450" cy="90" r="5" fill="#e6a94d"/>
       <circle cx="250" cy="480" r="4" fill="#e6a94d"/>
     </svg>
+    <a class="profile-bubble" href="https://github.com/echarvel3" target="_blank" rel="noreferrer" aria-label="Visit Eduardo's GitHub profile">
+      <span class="avatar"><img src="images/photo_hiking.jpg" alt="Eduardo Charvel" /></span>
+      <span class="gh-badge" aria-hidden="true">
+        <svg viewBox="0 0 16 16" fill="currentColor"><path d="M8 0C3.58 0 0 3.58 0 8c0 3.54 2.29 6.53 5.47 7.59.4.07.55-.17.55-.38 0-.19-.01-.82-.01-1.49-2.01.37-2.53-.49-2.69-.94-.09-.23-.48-.94-.82-1.13-.28-.15-.68-.52-.01-.53.63-.01 1.08.58 1.23.82.72 1.21 1.87.87 2.33.66.07-.52.28-.87.51-1.07-1.78-.2-3.64-.89-3.64-3.95 0-.87.31-1.59.82-2.15-.08-.2-.36-1.02.08-2.12 0 0 .67-.21 2.2.82a7.6 7.6 0 0 1 2-.27c.68 0 1.36.09 2 .27 1.53-1.04 2.2-.82 2.2-.82.44 1.1.16 1.92.08 2.12.51.56.82 1.27.82 2.15 0 3.07-1.87 3.75-3.65 3.95.29.25.54.73.54 1.48 0 1.07-.01 1.93-.01 2.2 0 .21.15.46.55.38A8.013 8.013 0 0 0 16 8c0-4.42-3.58-8-8-8z"/></svg>
+      </span>
+    </a>
     <div class="hero-content">
+      <h1>Eduardo<br><em>Charvel</em></h1>
       <div class="hero-id">
-        <a class="profile-bubble" href="https://github.com/echarvel3" target="_blank" rel="noreferrer" aria-label="Visit Eduardo's GitHub profile">
-          <span class="avatar"><img src="images/photo_hiking.jpg" alt="Eduardo Charvel" /></span>
-          <span class="gh-badge" aria-hidden="true">
-            <svg viewBox="0 0 16 16" fill="currentColor"><path d="M8 0C3.58 0 0 3.58 0 8c0 3.54 2.29 6.53 5.47 7.59.4.07.55-.17.55-.38 0-.19-.01-.82-.01-1.49-2.01.37-2.53-.49-2.69-.94-.09-.23-.48-.94-.82-1.13-.28-.15-.68-.52-.01-.53.63-.01 1.08.58 1.23.82.72 1.21 1.87.87 2.33.66.07-.52.28-.87.51-1.07-1.78-.2-3.64-.89-3.64-3.95 0-.87.31-1.59.82-2.15-.08-.2-.36-1.02.08-2.12 0 0 .67-.21 2.2.82a7.6 7.6 0 0 1 2-.27c.68 0 1.36.09 2 .27 1.53-1.04 2.2-.82 2.2-.82.44 1.1.16 1.92.08 2.12.51.56.82 1.27.82 2.15 0 3.07-1.87 3.75-3.65 3.95.29.25.54.73.54 1.48 0 1.07-.01 1.93-.01 2.2 0 .21.15.46.55.38A8.013 8.013 0 0 0 16 8c0-4.42-3.58-8-8-8z"/></svg>
-          </span>
-        </a>
         <div class="hero-id-text">
           <p class="hero-eyebrow mb-0">PhD Candidate · UC San Diego · Expected 2027</p>
-          <a class="gh-caption" href="https://github.com/echarvel3" target="_blank" rel="noreferrer">View my GitHub <span aria-hidden="true">↗</span></a>
         </div>
       </div>
-      <h1>Eduardo<br><em>Charvel</em></h1>
-      <p class="hero-bio">Building computational tools for low-coverage population genomics and environmental DNA.</p>
       <div class="hero-links">
         <a class="btn btn-primary btn-tutorials" href="tutorials.html">
           <svg class="pc-icon" viewBox="0 0 24 24" aria-hidden="true">
@@ -453,9 +465,20 @@
           </svg>
           Tutorials
         </a>
-        <a class="btn btn-outline" href="https://scholar.google.com/citations?user=Mjxe2NYAAAAJ" target="_blank">Google Scholar</a>
+        <a class="btn btn-outline" href="https://github.com/echarvel3" target="_blank" rel="noreferrer">GitHub</a>
         <a class="btn btn-outline" href="mailto:edcharvel@ucsd.edu">Email</a>
-        <a class="btn btn-outline" href="documents/EduardoCharvel_CV.pdf" download>Download CV</a>
+        <span class="hero-links-break" aria-hidden="true"></span>
+        <a class="btn btn-outline btn-cv" href="documents/EduardoCharvel_CV.pdf" download>
+          <svg class="cv-icon" viewBox="0 0 24 24" aria-hidden="true">
+            <path d="M6 2.5 H14 L19 7.5 V21.5 H6 Z" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linejoin="round"/>
+            <path d="M14 2.5 V7.5 H19" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linejoin="round"/>
+            <rect x="8" y="9" width="9" height="11" fill="currentColor" opacity="0.16"/>
+            <line x1="9" y1="12" x2="14" y2="12" stroke="currentColor" stroke-width="1.4" stroke-linecap="round"/>
+            <line x1="9" y1="15.5" x2="13" y2="15.5" stroke="currentColor" stroke-width="1.4" stroke-linecap="round"/>
+          </svg>
+          CV
+        </a>
+        <a class="btn btn-outline" href="https://scholar.google.com/citations?user=Mjxe2NYAAAAJ" target="_blank">Google Scholar</a>
       </div>
     </div>
   </div>
@@ -469,17 +492,17 @@
     </div>
     <div class="about-grid">
       <div class="about-text reveal">
-        <p>I'm a PhD Candidate in <strong><a href="https://bioinformatics.ucsd.edu/node/21209" target="_blank">Bioinformatics &amp; Systems Biology at UC San Diego</a></strong>, working in the <strong><a href="http://eceweb.ucsd.edu/~smirarab/" target="_blank">Mirarab Lab</a></strong>.</p>
+        <p>I'm a PhD Candidate in <strong><a href="https://bioinformatics.ucsd.edu/node/21209" target="_blank">Bioinformatics &amp; Systems Biology at UC San Diego</a></strong>, working in the <strong><a href="http://eceweb.ucsd.edu/~smirarab/" target="_blank">Mirarab Lab</a></strong>. My research involves building computational tools for effective and affordable biodiversity monitoring.</p>
       </div>
     </div>
     <div class="methods-grid" id="research">
       <div class="method-card card reveal">
         <h3>Genome Skimming</h3>
-        <p>K-mer methods for low-coverage genome skims: <a class="paper-link" href="#pub-reskmer"><strong>ReSkmer</strong></a> estimates genomic distances and <a class="paper-link" href="#pub-dipskmer"><strong>DipSkmer</strong></a> models heterozygosity for nucleotide diversity.</p>
+        <p>K-mer methods for low-coverage genome skims: <a class="paper-link" href="#pub-reskmer">ReSkmer</a> estimates genomic distances and <a class="paper-link" href="#pub-dipskmer">DipSkmer</a> models heterozygosity for nucleotide diversity.</p>
       </div>
       <div class="method-card card reveal delay-80ms">
         <h3>Phylogenetics</h3>
-        <p><a class="paper-link" href="#pub-sysbio"><strong>EM-Date</strong></a> uses expectation-maximization to enable phylogenetic dating under a categorical rate model, improving the accuracy of divergence time estimation.</p>
+        <p><a class="paper-link" href="#pub-sysbio">EM-Date</a> uses expectation-maximization to enable phylogenetic dating under a categorical rate model, improving the accuracy of divergence time estimation.</p>
       </div>
       <div class="method-card card reveal delay-160ms">
         <h3>Metagenomics</h3>
