@@ -235,7 +235,8 @@
     .method-card a:focus-visible { outline: 2px solid var(--accent); outline-offset: 2px; }
 
     /* ── PUBLICATIONS ── */
-    .pub-item { scroll-margin-top: 6rem; padding: 1.75rem 0; border-bottom: 1px solid var(--rule); display: grid; grid-template-columns: 44px 1fr; gap: 0 1.5rem; }
+    .pub-item { scroll-margin-top: 6rem; padding: 1.75rem 1rem; margin: 0 -1rem; transition: opacity 0.55s ease, transform 0.55s ease, background var(--transition-fast), box-shadow var(--transition-fast); border-bottom: 1px solid var(--rule); display: grid; grid-template-columns: 44px 1fr; gap: 0 1.5rem; }
+    .pub-item:hover { background: rgba(11, 16, 24, 0.88); box-shadow: 0 0 0 1px var(--rule); }
     .pub-year { font-family: var(--mono); font-size: 0.72rem; color: var(--accent); opacity: 0.85; padding-top: 0.2rem; }
     .pub-title { font-size: 1rem; font-weight: 500; line-height: 1.4; margin-bottom: 0.4rem; color: var(--ink); }
     .pub-authors { font-size: 0.84rem; color: var(--muted); margin: 0.35rem 0; }
@@ -247,7 +248,8 @@
     .pub-link:focus-visible { outline: 2px solid var(--accent); outline-offset: 1px; }
 
     /* ── TALKS ── */
-    .talk-item { padding: 1.5rem 0; border-bottom: 1px solid var(--rule); display: grid; grid-template-columns: 44px 1fr; gap: 0 1.5rem; }
+    .talk-item { padding: 1.5rem 1rem; margin: 0 -1rem; transition: opacity 0.55s ease, transform 0.55s ease, background var(--transition-fast), box-shadow var(--transition-fast); border-bottom: 1px solid var(--rule); display: grid; grid-template-columns: 44px 1fr; gap: 0 1.5rem; }
+    .talk-item:hover { background: rgba(11, 16, 24, 0.88); box-shadow: 0 0 0 1px var(--rule); }
     .talk-year { font-family: var(--mono); font-size: 0.7rem; color: var(--accent); opacity: 0.85; padding-top: 0.15rem; }
     .talk-title { font-size: 1rem; font-weight: 500; color: var(--ink); margin-bottom: 0.3rem; line-height: 1.4; }
     .talk-venue { font-family: var(--mono); font-size: 0.7rem; color: var(--muted); }
